@@ -1,8 +1,8 @@
 import React from 'react';
 import Card from "../card/card";
-import styles from './collection.module.css'
+import styles from './category.module.css'
 
-const Collection = ({title, ingredients}) => {
+const Category = ({title, ingredients}) => {
   return (
     <section className="pb-10">
       <h2 className={`${styles.title} text text_type_main-medium mb-6`}>{title}</h2>
@@ -16,4 +16,4 @@ const Collection = ({title, ingredients}) => {
   );
 };
 
-export default Collection;
+export default Category;

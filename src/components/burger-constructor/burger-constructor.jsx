@@ -9,22 +9,27 @@ import styles from './burger-constructor.module.css'
 
 const BurgerConstructor = ({ingredients}) => {
 
-  const ingredientsSets = ingredients.reduce((acc, item) => {
-    if (!acc[item.type]) {
-      acc[item.type] = [];
+  const {bun, stuffing} = ingredients.reduce((acc, item) => {
+    if (!acc.bun && !acc.stuffing) {
+      acc.bun = [];
+      acc.stuffing = [];
     }
-    acc[item.type].push(item);
+
+    if (item.type !== "bun") {
+      acc.stuffing.push(item);
+    } else {
+      acc.bun.push(item);
+    }
     return acc;
-  }, {})
+  }, {});
 
   const rand = (max) => Math.round(Math.random() * max);
 
-  const currentBun = ingredientsSets.bun[rand(ingredientsSets.bun.length - 1)];
+  const currentBun = bun[rand(bun.length - 1)];
 
-  const currentMain = Array.from({length: 10}).map(_ =>
-    ingredientsSets.main[rand(ingredientsSets.main.length - 1)]);
+  const currentStuffing = Array.from({length: 10}).map(_ => stuffing[rand(stuffing.length - 1)]);
 
-  const totalPrice = currentMain.reduce((acc, item) => acc + item.price, 0);
+  const totalPrice = currentStuffing.reduce((acc, item) => acc + item.price, 0) + currentBun.price * 2;
 
   return (
     <div className={`${styles.constructor} pt-25`}>
@@ -32,14 +37,14 @@ const BurgerConstructor = ({ingredients}) => {
         <ConstructorElement
           type="top"
           isLocked={true}
-          text={currentBun.name}
+          text={`${currentBun.name} (верх)`}
           price={currentBun.price}
           thumbnail={currentBun.image_mobile}
           extraClass="ml-10"
         />
         <div className={`${styles.list} custom-scroll`}>
           {
-            currentMain.map((item, i) => {
+            currentStuffing.map((item, i) => {
               return (
                 <div className={styles.element} key={item._id + i}>
                   <DragIcon type="primary" />
@@ -57,7 +62,7 @@ const BurgerConstructor = ({ingredients}) => {
         <ConstructorElement
           type="bottom"
           isLocked={true}
-          text={currentBun.name}
+          text={`${currentBun.name} (низ)`}
           price={currentBun.price}
           thumbnail={currentBun.image_mobile}
           extraClass="ml-10"
