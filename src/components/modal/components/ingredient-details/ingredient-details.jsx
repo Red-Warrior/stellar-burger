@@ -1,6 +1,7 @@
-import React, { memo } from 'react';
+import React, { memo } from "react";
 import ingredientsPropTypes from "../../../../utils/ingredientsPropTypes";
-import styles from './ingredient-details.module.css';
+import styles from "./ingredient-details.module.css";
+import PropTypes from "prop-types";
 
 const IngredientDetails = memo(({payload}) => {
   const {calories, proteins, fat, carbohydrates} = payload;
@@ -35,5 +36,5 @@ const IngredientDetails = memo(({payload}) => {
 export default IngredientDetails;
 
 IngredientDetails.propTypes = {
-  payload: ingredientsPropTypes.isRequired
+  payload: PropTypes.oneOfType([ingredientsPropTypes.isRequired, PropTypes.any]).isRequired
 };

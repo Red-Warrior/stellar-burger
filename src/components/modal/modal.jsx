@@ -1,13 +1,28 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from "react";
 import PropTypes from "prop-types";
 import { createPortal } from "react-dom";
-import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
-import ModalOverlay from './components/modal-overlay/modal-overlay';
-import styles from './modal.module.css';
+import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
+import ModalOverlay from "./components/modal-overlay/modal-overlay";
+import styles from "./modal.module.css";
 
 const modalRoot = document.getElementById("react-modals");
 
 const Modal = memo(({children, title, handleCloseModal, extraClass}) => {
+
+  const keyHandler = (e) => {
+    if (e.key === 'Escape') {
+      handleCloseModal();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", keyHandler)
+    return () => {
+      document.removeEventListener("keydown", keyHandler)
+    }
+    // eslint-disable-next-line
+  }, []);
+
   return createPortal(
     (
       <>
