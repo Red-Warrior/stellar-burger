@@ -1,21 +1,22 @@
-.buttonHeader {
+.linkHeader {
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: none;
 }
 
-.buttonHeader svg,
-.buttonHeader span {
+.linkHeader svg,
+.linkHeader span {
   transition: var(--common-transition);
 }
 
-.buttonHeader:hover svg {
+.linkHeader:hover svg {
   transition: var(--common-transition);
   fill: white;
 }
 
-.buttonHeader:hover span {
+.linkHeader:hover span {
   color: var(--text-primary-color);
 }
 

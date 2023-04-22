@@ -1,11 +1,10 @@
 .Ingredients {
+  box-sizing: border-box;
   width: 600px;
-  height: 872px;
-
-  border: 1px solid dodgerblue;
+  height: 912px;
 }
 
 .container {
-  height: 716px;
+  height: 754px;
   overflow-y: scroll;
 }

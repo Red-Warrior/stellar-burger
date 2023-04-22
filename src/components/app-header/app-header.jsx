@@ -1,52 +1,34 @@
-import React, { useState } from 'react';
-import styles from './app-header.module.css'
-import buttonStyles from '../button-header/button-header.module.css'
-
+import React from 'react';
+import linkStyles from './components/link-header/link-header.module.css';
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import ButtonHeader from "../button-header/button-header";
+import LinkHeader from "./components/link-header/link-header";
+import styles from './app-header.module.css';
 
 const AppHeader = () => {
-  const [state, setState] = useState({
-    constructor: 'primary',
-    List: 'secondary',
-    Icon: 'secondary'
-  });
-
-  const setActiveIcon = (e) => {
-
-    const selectedName = e.currentTarget.name;
-    setState((prevState) => {
-      prevState = {...prevState};
-      Object.keys(prevState)
-        .forEach(name => prevState[name] = name === selectedName ? 'primary' : "secondary")
-      return prevState;
-    });
-  }
-
-  const activeStyle = `ml-2 text text_type_main-default ${buttonStyles.active}`;
-  const defaultStyle = `ml-2 text text_type_main-default ${buttonStyles.default}`;
+  const activeStyle = `ml-2 text text_type_main-default ${linkStyles.active}`;
+  const defaultStyle = `ml-2 text text_type_main-default ${linkStyles.default}`;
 
   return (
     <nav className={styles.appHeader}>
       <div className={styles.container}>
-        <div className={styles.buttonContainer}>
-          <ButtonHeader name="constructor" extraClass="mr-2" setActiveIcon={setActiveIcon} type="secondary">
-            <BurgerIcon type={state.constructor} />
-            <span className={state.constructor === 'primary' ? activeStyle : defaultStyle}>Конструктор</span>
-          </ButtonHeader>
+        <div className={styles.linkContainer}>
+          <LinkHeader name="constructor" extraClass="mr-2" type="secondary">
+            <BurgerIcon type="primary" />
+            <span className={activeStyle}>Конструктор</span>
+          </LinkHeader>
 
-          <ButtonHeader name="List" setActiveIcon={setActiveIcon} type="secondary">
-            <ListIcon type={state.List} />
-            <span className={state.List === 'primary' ? activeStyle : defaultStyle}>Лента заказов</span>
-          </ButtonHeader>
+          <LinkHeader name="List" type="secondary">
+            <ListIcon type="secondary" />
+            <span className={defaultStyle}>Лента заказов</span>
+          </LinkHeader>
         </div>
 
         <Logo />
 
-        <ButtonHeader extraClass={styles.iconButton} name="Icon" setActiveIcon={setActiveIcon} type="secondary">
-          <ProfileIcon type={state.Icon} />
-          <span className={state.Icon === 'primary' ? activeStyle : defaultStyle}>Личный кабинет</span>
-        </ButtonHeader>
+        <LinkHeader extraClass={styles.icon} name="Icon" type="secondary">
+          <ProfileIcon type="secondary" />
+          <span className={defaultStyle}>Личный кабинет</span>
+        </LinkHeader>
       </div>
     </nav>
   );

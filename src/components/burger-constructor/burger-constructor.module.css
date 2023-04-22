@@ -1,8 +1,7 @@
 .constructor {
+  box-sizing: border-box;
   width: 600px;
-  height: 812px;
-
-  border: 1px solid dodgerblue;
+  height: 912px;
 }
 
 .ingredients {
@@ -17,9 +16,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-
-
-  border: 1px solid orange;
 }
 
 .element {
@@ -37,4 +33,8 @@
 .cost svg {
   width: 36px;
   height: 36px;
+}
+
+.bun {
+  width: 531px;
 }
