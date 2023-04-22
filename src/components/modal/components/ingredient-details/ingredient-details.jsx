@@ -3,8 +3,8 @@ import ingredientsPropTypes from "../../../../utils/ingredientsPropTypes";
 import styles from "./ingredient-details.module.css";
 import PropTypes from "prop-types";
 
-const IngredientDetails = memo(({payload}) => {
-  const {calories, proteins, fat, carbohydrates} = payload;
+const IngredientDetails = memo(({selectedIngredient}) => {
+  const {calories, proteins, fat, carbohydrates, name, image_large} = selectedIngredient;
 
   const property = {
     "Калории,ккал": calories,
@@ -15,9 +15,9 @@ const IngredientDetails = memo(({payload}) => {
 
   return (
     <div className={styles.container}>
-      <img src={payload.image_large} alt={`Изображение: ${payload.name}`} />
+      <img src={image_large} alt={`Изображение: ${name}`} />
       <p className="text text_type_main-medium mt-4">
-        {payload.name}
+        {name}
       </p>
       <ul className={`${styles.set} mt-8`}>
         {
@@ -36,5 +36,5 @@ const IngredientDetails = memo(({payload}) => {
 export default IngredientDetails;
 
 IngredientDetails.propTypes = {
-  payload: PropTypes.oneOfType([ingredientsPropTypes.isRequired, PropTypes.any]).isRequired
+  selectedIngredient: PropTypes.oneOfType([ingredientsPropTypes.isRequired, PropTypes.any]).isRequired
 };

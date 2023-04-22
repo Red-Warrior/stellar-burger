@@ -9,6 +9,10 @@ import { getIngredients } from "../../utils/api";
 import styles from "./app.module.css";
 import modalStyles from "../modal/modal.module.css";
 
+import { IngredientsContext } from "../../services/appContext";
+import { ModalContext } from "../../services/modalContext";
+import { OrderNumberContext } from "../../services/orderNumberContext";
+
 const App = () => {
   const [state, setState] = useState({
     isLoading: false,
@@ -16,22 +20,23 @@ const App = () => {
     data: []
   });
 
+  const [visible, setVisible] = useState(false);
   const [modalIngredient, setModalIngredient] = useState(null);
-
-  const [modalOrder, setModalOrder] = useState(null);
+  const [orderNumber, setOrderNumber] = useState(null);
 
   const handleOpenModal = useCallback((payload) => {
-    if (typeof payload === 'object') {
+    if (payload) {
       setModalIngredient(payload);
-    } else {
-      setModalOrder(payload);
     }
+    setVisible(true);
   }, []);
 
   const handleCloseModal = useCallback(() => {
-    setModalIngredient(null);
-    setModalOrder(null);
-  }, []);
+    if (modalIngredient) {
+      setModalIngredient(null);
+    }
+    setVisible(false);
+  }, [modalIngredient]);
 
   useEffect(() => {
     setState({...state, hasError: false, isLoading: true});
@@ -50,33 +55,46 @@ const App = () => {
 
   return (
     <div className={styles.app}>
-      <AppHeader />
-      {isLoading && 'Загрузка...'}
-      {hasError && 'Произошла ошибка'}
-      {
-        !isLoading &&
-        !hasError &&
-        data.length && (
-          <main className={styles.container}>
-            <BurgerIngredients ingredients={data} handleOpenModal={handleOpenModal} />
-            <BurgerConstructor ingredients={data} handleOpenModal={handleOpenModal} />
-          </main>
-        )
-      }
-      {
-        (modalIngredient || modalOrder) &&
-        <Modal
-          extraClass={modalIngredient ? modalStyles.ingredient : modalStyles.order}
-          title={modalIngredient ? "Детали ингредиента" : ""}
-          handleCloseModal={handleCloseModal}
-        >
-          {
-            modalIngredient ?
-              <IngredientDetails payload={modalIngredient}></IngredientDetails>
-              :
-              <OrderDetails payload={modalOrder}></OrderDetails>
-          }
-        </Modal>}
+      <IngredientsContext.Provider value={data}>
+        <ModalContext.Provider value={handleOpenModal}>
+          <OrderNumberContext.Provider value={{orderNumber, setOrderNumber}}>
+            <AppHeader />
+            {isLoading && 'Загрузка...'}
+            {hasError && 'Произошла ошибка'}
+            {
+              !isLoading &&
+              !hasError &&
+              data.length && (
+                <main className={styles.container}>
+                  <BurgerIngredients />
+                  <BurgerConstructor />
+                </main>
+              )
+            }
+            {
+              visible && modalIngredient ? (
+                  <Modal
+                    extraClass={modalStyles.ingredient}
+                    title="Детали ингредиента"
+                    handleCloseModal={handleCloseModal}
+                  >
+                    <IngredientDetails selectedIngredient={modalIngredient} />
+                  </Modal>)
+                :
+                visible ?
+                  (
+                    <Modal
+                      extraClass={modalStyles.order}
+                      handleCloseModal={handleCloseModal}
+                    >
+                      <OrderDetails />
+                    </Modal>)
+                  :
+                  null
+            }
+          </OrderNumberContext.Provider>
+        </ModalContext.Provider>
+      </IngredientsContext.Provider>
     </div>
   );
 }

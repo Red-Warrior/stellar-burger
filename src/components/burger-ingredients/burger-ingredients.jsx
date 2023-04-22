@@ -1,9 +1,9 @@
-import React, { memo } from 'react';
-import PropTypes from 'prop-types';
-import ingredientsPropTypes from "../../utils/ingredientsPropTypes";
+import React, { memo, useContext } from "react";
 import IngredientsMenu from "../ingredients-menu/ingredients-menu";
 import Category from "../category/category";
-import styles from './burger-ingredients.module.css';
+import styles from "./burger-ingredients.module.css";
+
+import { IngredientsContext } from "../../services/appContext";
 
 const titles = {
   bun: 'Булки',
@@ -11,7 +11,9 @@ const titles = {
   main: 'Начинки',
 };
 
-const BurgerIngredients = memo(({ingredients, handleOpenModal}) => {
+const BurgerIngredients = memo(() => {
+  const ingredients = useContext(IngredientsContext);
+
   const ingredientsSets = ingredients.reduce((acc, item) => {
     if (!acc[item.type]) {
       acc[item.type] = [];
@@ -31,7 +33,6 @@ const BurgerIngredients = memo(({ingredients, handleOpenModal}) => {
                 key={type}
                 title={titles[type]}
                 ingredients={ingredientsSets[type]}
-                handleOpenModal={handleOpenModal}
               />
             )
           )
@@ -42,8 +43,3 @@ const BurgerIngredients = memo(({ingredients, handleOpenModal}) => {
 });
 
 export default BurgerIngredients;
-
-BurgerIngredients.propTypes = {
-  ingredients: PropTypes.arrayOf(ingredientsPropTypes.isRequired).isRequired,
-  handleOpenModal: PropTypes.func.isRequired
-};

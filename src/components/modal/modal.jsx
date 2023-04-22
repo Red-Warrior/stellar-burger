@@ -7,10 +7,10 @@ import styles from "./modal.module.css";
 
 const modalRoot = document.getElementById("react-modals");
 
-const Modal = memo(({children, title, handleCloseModal, extraClass}) => {
+const Modal = memo(({children, title = "", handleCloseModal, extraClass}) => {
 
   const keyHandler = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       handleCloseModal();
     }
   };
@@ -28,7 +28,7 @@ const Modal = memo(({children, title, handleCloseModal, extraClass}) => {
       <>
         <aside className={`${styles.modal} ${extraClass} pt-10`}>
           <div className={styles.title}>
-            <h2 className="text text_type_main-large ">
+            <h2 className="text text_type_main-large">
               {title}
             </h2>
             <div className={styles.closeIcon}>
