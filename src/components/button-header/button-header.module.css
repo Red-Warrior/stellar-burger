@@ -1,0 +1,28 @@
+.buttonHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: none;
+}
+
+.buttonHeader svg,
+.buttonHeader span {
+  transition: var(--common-transition);
+}
+
+.buttonHeader:hover svg {
+  transition: var(--common-transition);
+  fill: white;
+}
+
+.buttonHeader:hover span {
+  color: var(--text-primary-color);
+}
+
+.default {
+  color: var(--text-inactive-color);
+}
+
+.active {
+  color: var(--text-primary-color);
+}

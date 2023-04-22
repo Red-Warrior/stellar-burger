@@ -1,0 +1,40 @@
+.constructor {
+  width: 600px;
+  height: 812px;
+
+  border: 1px solid dodgerblue;
+}
+
+.ingredients {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.list {
+  height: 464px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+
+  border: 1px solid orange;
+}
+
+.element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cost {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.cost svg {
+  width: 36px;
+  height: 36px;
+}
