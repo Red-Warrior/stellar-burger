@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import AppHeader from "../app-header/app-header";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
@@ -22,7 +22,7 @@ const App = () => {
 
   const [visible, setVisible] = useState(false);
   const [modalIngredient, setModalIngredient] = useState(null);
-  const [orderNumber, setOrderNumber] = useState(null);
+  const [orderNum, setOrderNumber] = useState(null);
 
   const handleOpenModal = useCallback((payload) => {
     if (payload) {
@@ -52,12 +52,13 @@ const App = () => {
   }, []);
 
   const {data, isLoading, hasError} = state;
+  const orderContextValue = useMemo(() => ({orderNum, setOrderNumber}), [orderNum]);
 
   return (
     <div className={styles.app}>
       <IngredientsContext.Provider value={data}>
         <ModalContext.Provider value={handleOpenModal}>
-          <OrderNumberContext.Provider value={{orderNumber, setOrderNumber}}>
+          <OrderNumberContext.Provider value={orderContextValue}>
             <AppHeader />
             {isLoading && 'Загрузка...'}
             {hasError && 'Произошла ошибка'}
