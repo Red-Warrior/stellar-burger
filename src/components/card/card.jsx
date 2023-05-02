@@ -1,10 +1,13 @@
-import React, { memo } from 'react';
-import PropTypes from "prop-types";
+import React, { memo, useContext } from "react";
 import ingredientsPropTypes from "../../utils/ingredientsPropTypes";
-import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
-import styles from './card.module.css';
+import { CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
+import styles from "./card.module.css";
 
-const Card = memo(({ingredient, handleOpenModal}) => {
+import { ModalContext } from "../../services/modalContext";
+
+const Card = memo(({ingredient}) => {
+  const handleOpenModal = useContext(ModalContext);
+
   return (
     <div
       id={ingredient._id}
@@ -24,6 +27,5 @@ const Card = memo(({ingredient, handleOpenModal}) => {
 export default Card;
 
 Card.propTypes = {
-  ingredient: ingredientsPropTypes.isRequired,
-  handleOpenModal: PropTypes.func.isRequired
+  ingredient: ingredientsPropTypes.isRequired
 };

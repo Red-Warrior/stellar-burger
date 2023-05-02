@@ -1,13 +1,16 @@
-import React, { memo } from 'react';
-import PropTypes from 'prop-types';
-import icon from '../../../../images/done.png';
-import styles from './order-details.module.css';
+import React, { memo, useContext } from "react";
+import icon from "../../../../images/done.png";
+import styles from "./order-details.module.css";
 
-const OrderDetails = memo(({payload}) => {
+import { OrderNumberContext } from "../../../../services/orderNumberContext";
+
+const OrderDetails = memo(() => {
+  const {orderNumber} = useContext(OrderNumberContext);
+
   return (
     <div className={styles.order}>
       <h2 className="text text_type_digits-large mt-4 mb-8">
-        {payload}
+        {orderNumber}
       </h2>
       <p className="text text_type_main-medium mb-15">
         идентификатор заказа
@@ -24,7 +27,3 @@ const OrderDetails = memo(({payload}) => {
 });
 
 export default OrderDetails;
-
-OrderDetails.propTypes = {
-  payload: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.any]).isRequired
-};

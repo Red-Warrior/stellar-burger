@@ -1,98 +1,147 @@
-import React, { memo } from 'react';
-import PropTypes from "prop-types";
+import React, { memo, useReducer, useContext, useMemo, useEffect } from "react";
 import {
   ConstructorElement,
   CurrencyIcon,
   DragIcon,
   Button
-} from '@ya.praktikum/react-developer-burger-ui-components';
-import ingredientsPropTypes from "../../utils/ingredientsPropTypes";
-import styles from './burger-constructor.module.css';
+} from "@ya.praktikum/react-developer-burger-ui-components";
+import { postOrder } from "../../utils/api";
+import { getRandNumber, getRandArray } from "../../utils/gerRandom";
+import styles from "./burger-constructor.module.css";
 
-const BurgerConstructor = memo(({ingredients, handleOpenModal}) => {
+import { IngredientsContext } from "../../services/appContext";
+import { ModalContext } from "../../services/modalContext";
+import { OrderNumberContext } from "../../services/orderNumberContext";
 
-  const {bun, stuffing} = ingredients.reduce((acc, item) => {
+function getTotalPrice(bun, stuffing) {
+  return stuffing.reduce((acc, item) => acc + item.price, 0) + bun.price * 2;
+}
+
+const ingredientsInitialState = {bun: {}, stuffing: [], totalPrice: 0};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "set":
+      const bun = action.payload.bun[getRandNumber(action.payload.bun.length - 1)];
+      const stuffing = getRandArray(action.payload.stuffing, 10);
+      return {
+        bun,
+        stuffing,
+        totalPrice: getTotalPrice(bun, stuffing)
+      };
+    case "reset":
+      return ingredientsInitialState;
+    default:
+      throw new Error(`Wrong type of action: ${action.type}`);
+  }
+}
+
+const BurgerConstructor = memo(() => {
+
+  const ingredients = useContext(IngredientsContext);
+  const handleOpenModal = useContext(ModalContext);
+  const {setOrderNumber} = useContext(OrderNumberContext);
+
+  const [ingredientsState, ingredientsDispatcher] = useReducer(reducer, ingredientsInitialState, undefined);
+
+  const makeOrder = (e) => {
+    e.preventDefault();
+
+    const ingredientsId = [ingredientsState.bun, ...ingredientsState.stuffing].map(item => item._id);
+
+    postOrder(`${process.env.REACT_APP_BURGER_API_URL}/orders`, {
+      method: "POST",
+      body: JSON.stringify({ingredients: ingredientsId}),
+      headers: {"Content-type": "application/json; charset=UTF-8"}
+    })
+      .then(payload => {
+        setOrderNumber(payload.order.number)
+        handleOpenModal();
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
+  const ingredientsSet = useMemo(() => ingredients.reduce((acc, item) => {
     if (!acc.bun && !acc.stuffing) {
       acc.bun = [];
       acc.stuffing = [];
     }
-
     if (item.type !== "bun") {
       acc.stuffing.push(item);
     } else {
       acc.bun.push(item);
     }
     return acc;
-  }, {});
+  }, {}), [ingredients]);
 
-  const rand = (max) => Math.round(Math.random() * max);
+  useEffect(() => {
 
-  const currentBun = bun[rand(bun.length - 1)];
-
-  const currentStuffing = Array.from({length: 10}).map(_ => stuffing[rand(stuffing.length - 1)]);
-
-  const totalPrice = currentStuffing.reduce((acc, item) => acc + item.price, 0) + currentBun.price * 2;
+    ingredientsDispatcher({type: "set", payload: ingredientsSet});
+  }, [ingredientsSet]);
 
   const bunStyle = `${styles.bun} ml-8`;
+  const {bun, stuffing, totalPrice} = ingredientsState;
 
   return (
     <div className={`${styles.constructor} pt-25`}>
-      <div className={`${styles.ingredients} mb-10 ml-4`}>
-        <ConstructorElement
-          type="top"
-          isLocked={true}
-          text={`${currentBun.name} (верх)`}
-          price={currentBun.price}
-          thumbnail={currentBun.image_mobile}
-          extraClass={bunStyle}
-        />
-        <div className={`${styles.list} custom-scroll pr-2`}>
-          {
-            currentStuffing.map((item, i) => {
-              return (
-                <div className={styles.element} key={item._id + i}>
-                  <DragIcon type="primary" />
-                  <ConstructorElement
-                    text={item.name}
-                    price={item.price}
-                    thumbnail={item.image_mobile}
-                    extraClass="ml-2"
-                  />
-                </div>
-              )
-            })
-          }
-        </div>
-        <ConstructorElement
-          type="bottom"
-          isLocked={true}
-          text={`${currentBun.name} (низ)`}
-          price={currentBun.price}
-          thumbnail={currentBun.image_mobile}
-          extraClass={bunStyle}
-        />
-      </div>
+      {
+        ingredientsState.totalPrice && (
+          <>
+            <div className={`${styles.ingredients} mb-10 ml-4`}>
+              <ConstructorElement
+                type="top"
+                isLocked={true}
+                text={`${bun.name} (верх)`}
+                price={bun.price}
+                thumbnail={bun.image_mobile}
+                extraClass={bunStyle}
+              />
+              <div className={`${styles.list} custom-scroll pr-2`}>
+                {
+                  stuffing.map((item, i) => {
+                    return (
+                      <div className={styles.element} key={item._id + i}>
+                        <DragIcon type="primary" />
+                        <ConstructorElement
+                          text={item.name}
+                          price={item.price}
+                          thumbnail={item.image_mobile}
+                          extraClass="ml-2"
+                        />
+                      </div>
+                    )
+                  })
+                }
+              </div>
+              <ConstructorElement
+                type="bottom"
+                isLocked={true}
+                text={`${bun.name} (низ)`}
+                price={bun.price}
+                thumbnail={bun.image_mobile}
+                extraClass={bunStyle}
+              />
+            </div>
 
-      <div className={`${styles.cost} mr-4`}>
-        <span className="text text_type_digits-medium mr-2">{totalPrice}</span>
-        <CurrencyIcon type="primary" />
-        <Button
-          extraClass="ml-10"
-          type="primary"
-          htmlType="button"
-          size="large"
-          onClick={() => handleOpenModal(totalPrice)}
-        >
-          Оформить заказ
-        </Button>
-      </div>
+            <div className={`${styles.cost} mr-4`}>
+              <span className="text text_type_digits-medium mr-2">{totalPrice}</span>
+              <CurrencyIcon type="primary" />
+              <Button
+                extraClass="ml-10"
+                type="primary"
+                htmlType="submit"
+                size="large"
+                onClick={makeOrder}
+              >
+                Оформить заказ
+              </Button>
+            </div>
+          </>)
+      }
     </div>
   );
 });
 
 export default BurgerConstructor;
-
-BurgerConstructor.propsTypes = {
-  ingredients: PropTypes.arrayOf(ingredientsPropTypes.isRequired).isRequired,
-  handleOpenModal: PropTypes.func.isRequired
-};
