@@ -52,10 +52,9 @@ export const ingredients = (state = initialState, action) => {
       for (const key in resetIngredientsCounter) {
         resetIngredientsCounter[key] = 0;
       }
-
       return {
         ...state,
-        resetIngredientsCounter
+        ingredientsCounter: resetIngredientsCounter
       };
 
     case INCREASE_INGREDIENTS_COUNT:
@@ -68,11 +67,13 @@ export const ingredients = (state = initialState, action) => {
       };
 
     case DECREASE_INGREDIENTS_COUNT:
+      if (state.ingredientsCounter[action.payload] === 0) return;
+
       return {
         ...state,
         ingredientsCounter: {
           ...state.ingredientsCounter,
-          [action.payload]: state[action.payload] > 0 ? -1 : 0
+          [action.payload]: state.ingredientsCounter[action.payload] - 1
         }
       };
 

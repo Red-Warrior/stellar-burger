@@ -1,17 +1,16 @@
-import React, { memo, useState, useEffect, useRef } from "react";
+import React, { memo, useMemo, useState, useEffect, useRef } from "react";
 import { nanoid } from "nanoid";
+import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { getChosenIngredients } from "../../services/burger-constructor/selectors"
 import { OPEN_MODAL, SET_MODAL_TYPE } from "../../services/current-ingredient/actions";
 import {
   SET_STUFFING_INGREDIENT,
   SET_BUN,
-  SET_TOTAL_PRICE,
   SET_ORDER_NUMBER
 } from "../../services/burger-constructor/actions";
 import { INCREASE_INGREDIENTS_COUNT } from "../../services/ingredients/actions";
-
-import { useDrop } from 'react-dnd';
+import { GET_ORDER_INGREDIENTS_FAILED } from "../../services/order/actions";
 
 import {
   ConstructorElement,
@@ -31,8 +30,7 @@ const BurgerConstructor = memo(() => {
   const [isScroll, setIsScroll] = useState(false);
 
   const ingredients = useSelector(getChosenIngredients);
-  const {bun, stuffing, totalPrice} = ingredients;
-
+  const {bun, stuffing} = ingredients;
 
   const isPrice = () => !!bun || !!stuffing.length;
 
@@ -46,9 +44,17 @@ const BurgerConstructor = memo(() => {
     return [bun, ...stuffing].map(item => item._id);
   };
 
-  useEffect(() => {
-    dispatch({type: SET_TOTAL_PRICE, payload: {bun, stuffing}})
-  }, [dispatch, stuffing, bun]);
+  const totalPrice = useMemo(() => {
+    if (!bun && !stuffing.length) {
+      return 0;
+    }
+
+    let totalPrice = stuffing.reduce((acc, item) => acc + item?.price, 0);
+    if (bun) {
+      totalPrice += bun.price * 2;
+    }
+    return totalPrice;
+  }, [bun, stuffing]);
 
   useEffect(() => {
     if (stuffingContainer.current.clientHeight >= 464) {
@@ -71,6 +77,7 @@ const BurgerConstructor = memo(() => {
           dispatch({type: OPEN_MODAL});
         })
         .catch(e => {
+          dispatch({type: GET_ORDER_INGREDIENTS_FAILED});
           console.log(e);
         });
     } else {
@@ -92,8 +99,8 @@ const BurgerConstructor = memo(() => {
   const [{isHover}, dropTargetRef] = useDrop({
     accept: "stuffing",
     drop(item) {
-      if (!stuffing.find(stuff => stuff._id === item._id)) {
-        dispatch({type: SET_STUFFING_INGREDIENT, payload: {...item, _id: `${item._id}${nanoid(2)}`}})
+      if (!item.sortId) {
+        dispatch({type: SET_STUFFING_INGREDIENT, payload: {...item, sortId: nanoid(10)}})
         dispatch({type: INCREASE_INGREDIENTS_COUNT, payload: item.name})
       }
     },
@@ -107,24 +114,23 @@ const BurgerConstructor = memo(() => {
   return (
     <div className={`${styles.constructor} pt-25`}>
       <div ref={dropTargetRefBun} className={`${styles.ingredients} mb-10 ml-4`}>
-        <div>
-          {
-            !bun ?
-              <DefaultConstructorElement
-                extraClass={bunStyle}
-                isHover={isOverCurrent} type="top"
-                text="Выберите булочку" />
-              :
-              <ConstructorElement
-                type="top"
-                isLocked={true}
-                text={`${bun.name} (верх)`}
-                price={bun.price}
-                thumbnail={bun.image_mobile}
-                extraClass={bunStyle}
-              />
-          }
-        </div>
+        {
+          !bun ?
+            <DefaultConstructorElement
+              extraClass={bunStyle}
+              isHover={isOverCurrent}
+              type="top"
+              text="Выберите булочку" />
+            :
+            <ConstructorElement
+              type="top"
+              isLocked={true}
+              text={`${bun.name} (верх)`}
+              price={bun.price}
+              thumbnail={bun.image_mobile}
+              extraClass={bunStyle}
+            />
+        }
         <div ref={elem => {
           dropTargetRef(elem);
           stuffingContainer.current = elem;
@@ -135,32 +141,30 @@ const BurgerConstructor = memo(() => {
               <DefaultConstructorElement extraClass={bunStyle} isHover={isHover} text="Выберите начинку" />
               :
               stuffing.map((item, index) => <ConstructorIngredient
-                key={item._id}
+                key={item.sortId}
                 item={item}
                 index={index}
+                sortId={item.sortId}
               />)
           }
         </div>
-
-        <div>
-          {
-            !bun ?
-              <DefaultConstructorElement
-                extraClass={bunStyle}
-                isHover={isOverCurrent}
-                type="bottom"
-                text="Выберите булочку" />
-              :
-              <ConstructorElement
-                type="bottom"
-                isLocked={true}
-                text={`${bun.name} (низ)`}
-                price={bun.price}
-                thumbnail={bun.image_mobile}
-                extraClass={bunStyle}
-              />
-          }
-        </div>
+        {
+          !bun ?
+            <DefaultConstructorElement
+              extraClass={bunStyle}
+              isHover={isOverCurrent}
+              type="bottom"
+              text="Выберите булочку" />
+            :
+            <ConstructorElement
+              type="bottom"
+              isLocked={true}
+              text={`${bun.name} (низ)`}
+              price={bun.price}
+              thumbnail={bun.image_mobile}
+              extraClass={bunStyle}
+            />
+        }
       </div>
       <div className={`${styles.cost} mr-4`}>
         <span className="text text_type_digits-medium mr-2">{totalPrice}</span>

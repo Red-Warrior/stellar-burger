@@ -9,10 +9,10 @@ import {
   REPLACE_WITH_SORTED_STUFFING
 } from "../../../../services/burger-constructor/actions";
 import { DECREASE_INGREDIENTS_COUNT } from "../../../../services/ingredients/actions";
+import PropTypes from "prop-types";
+import ingredientsPropTypes from "../../../../utils/ingredientsPropTypes"
 
-const ConstructorIngredient = ({item, index}) => {
-  const _id = item._id;
-
+const ConstructorIngredient = ({item, index, sortId}) => {
   const ref = useRef(null)
 
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const ConstructorIngredient = ({item, index}) => {
   const stuffing = useSelector(getChosenIngredients).stuffing;
 
   const deleteIngredient = (item) => {
-    dispatch({type: DELETE_STUFFING_INGREDIENT, payload: item._id});
+    dispatch({type: DELETE_STUFFING_INGREDIENT, payload: item.sortId});
     dispatch({type: DECREASE_INGREDIENTS_COUNT, payload: item.name})
   }
 
@@ -60,7 +60,7 @@ const ConstructorIngredient = ({item, index}) => {
       const draggedElem = sortedStuffingOrder.splice(dragIndex, 1);
       sortedStuffingOrder.splice(hoverIndex, 0, draggedElem[0]);
 
-      if (stuffing.find(stuff => stuff._id === item._id)) {
+      if (stuffing.find(stuff => stuff.sortId === item.sortId)) {
         dispatch({
           type: REPLACE_WITH_SORTED_STUFFING, payload: sortedStuffingOrder
         })
@@ -72,7 +72,7 @@ const ConstructorIngredient = ({item, index}) => {
   const [{isDragging}, drag] = useDrag({
     type: "stuffing",
     item: () => {
-      return {_id, index}
+      return {sortId, index}
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -101,8 +101,8 @@ const ConstructorIngredient = ({item, index}) => {
 
 export default ConstructorIngredient;
 
-
-
-
-
-
+ConstructorIngredient.propTypes = {
+  item: ingredientsPropTypes.isRequired,
+  index: PropTypes.number.isRequired,
+  sortId: PropTypes.string.isRequired
+};

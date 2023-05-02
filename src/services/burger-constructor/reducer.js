@@ -3,7 +3,6 @@ import {
   DELETE_STUFFING_INGREDIENT,
   SET_BUN,
   REMOVE_ALL_STUFFING,
-  SET_TOTAL_PRICE,
   SET_ORDER_NUMBER,
   DELETE_ORDER_NUMBER,
   REPLACE_WITH_SORTED_STUFFING,
@@ -34,7 +33,7 @@ export const burgerConstructor = (state = initialState, action) => {
     case DELETE_STUFFING_INGREDIENT:
       return {
         ...state,
-        stuffing: state.stuffing.filter(item => item._id !== action.payload)
+        stuffing: state.stuffing.filter(item => item.sortId !== action.payload)
       };
 
     case SET_BUN:
@@ -48,24 +47,6 @@ export const burgerConstructor = (state = initialState, action) => {
         ...state,
         bun: null,
         stuffing: []
-      };
-
-    case SET_TOTAL_PRICE:
-      const {bun, stuffing} = action.payload;
-      if (!bun && !stuffing.length) {
-        return {
-          ...state,
-          totalPrice: 0
-        };
-      }
-
-      let totalPrice = stuffing.reduce((acc, item) => acc + item?.price, 0);
-      if (bun) {
-        totalPrice += bun.price * 2;
-      }
-      return {
-        ...state,
-        totalPrice
       };
 
     case SET_ORDER_NUMBER:

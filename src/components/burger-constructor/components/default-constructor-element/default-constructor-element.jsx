@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from "./default-constructor-element.module.css";
+import PropTypes from "prop-types";
 
 const DefaultConstructorElement = ({type, text, extraClass = "", isHover}) => {
   const className = `${styles.constructorElement} ${styles[type]} ${extraClass}`;
@@ -12,3 +13,10 @@ const DefaultConstructorElement = ({type, text, extraClass = "", isHover}) => {
 };
 
 export default DefaultConstructorElement;
+
+DefaultConstructorElement.propTypes = {
+  type: PropTypes.string,
+  text: PropTypes.string.isRequired,
+  extraClass: PropTypes.string,
+  isHover: PropTypes.bool
+};
