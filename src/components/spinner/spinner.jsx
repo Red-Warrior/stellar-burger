@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './spinner.module.css'
-import logo from '../images/logo.svg';
+import logo from '../../images/logo.svg';
 
 const Spinner = () => {
   return (

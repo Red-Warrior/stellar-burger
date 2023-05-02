@@ -1,9 +1,10 @@
 import React, { memo } from "react";
-import ingredientsPropTypes from "../../../../utils/ingredientsPropTypes";
+import { useSelector } from "react-redux";
+import { getStoreIngredientsConstructor } from "../../../../services/current-ingredient/selectors";
 import styles from "./ingredient-details.module.css";
-import PropTypes from "prop-types";
 
-const IngredientDetails = memo(({selectedIngredient}) => {
+const IngredientDetails = memo(() => {
+  const {selectedIngredient} = useSelector(getStoreIngredientsConstructor);
   const {calories, proteins, fat, carbohydrates, name, image_large} = selectedIngredient;
 
   const property = {
@@ -34,7 +35,3 @@ const IngredientDetails = memo(({selectedIngredient}) => {
 });
 
 export default IngredientDetails;
-
-IngredientDetails.propTypes = {
-  selectedIngredient: PropTypes.oneOfType([ingredientsPropTypes.isRequired, PropTypes.any]).isRequired
-};

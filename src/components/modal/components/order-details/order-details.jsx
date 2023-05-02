@@ -1,11 +1,11 @@
-import React, { memo, useContext } from "react";
+import React, { memo } from "react";
+import { useSelector } from "react-redux";
 import icon from "../../../../images/done.png";
 import styles from "./order-details.module.css";
-
-import { OrderNumberContext } from "../../../../services/orderNumberContext";
+import { getChosenIngredients } from "../../../../services/burger-constructor/selectors";
 
 const OrderDetails = memo(() => {
-  const {orderNumber} = useContext(OrderNumberContext);
+  const {orderNumber} = useSelector(getChosenIngredients);
 
   return (
     <div className={styles.order}>
