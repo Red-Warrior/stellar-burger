@@ -1,13 +1,42 @@
 import React, { memo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  CLOSE_MODAL,
+  DELETE_MODAL_TYPE,
+  DELETE_SELECTED_INGREDIENT,
+} from "../../services/current-ingredient/actions";
+import { DELETE_ORDER_NUMBER, REMOVE_ALL_STUFFING } from "../../services/burger-constructor/actions";
+import { RESET_INGREDIENTS_COUNTER } from "../../services/ingredients/actions";
+
 import PropTypes from "prop-types";
 import { createPortal } from "react-dom";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import ModalOverlay from "./components/modal-overlay/modal-overlay";
 import styles from "./modal.module.css";
+import { getStoreIngredientsConstructor } from "../../services/current-ingredient/selectors";
 
 const modalRoot = document.getElementById("react-modals");
 
-const Modal = memo(({children, title = "", handleCloseModal, extraClass}) => {
+const Modal = memo(({children, title = "", extraClass}) => {
+
+  const dispatch = useDispatch();
+
+  const {modalType} = useSelector(getStoreIngredientsConstructor);
+
+  const handleCloseModal = () => {
+    dispatch({type: CLOSE_MODAL});
+    dispatch({type: DELETE_MODAL_TYPE});
+
+    if (modalType === "ingredientDetails") {
+      dispatch({type: DELETE_SELECTED_INGREDIENT});
+      return
+    }
+    if (modalType === "orderDetails") {
+      dispatch({type: REMOVE_ALL_STUFFING});
+      dispatch({type: RESET_INGREDIENTS_COUNTER});
+      dispatch({type: DELETE_ORDER_NUMBER});
+    }
+  };
 
   const keyHandler = (e) => {
     if (e.key === "Escape") {
@@ -49,6 +78,5 @@ export default Modal;
 Modal.propTypes = {
   children: PropTypes.element.isRequired,
   title: PropTypes.string,
-  handleCloseModal: PropTypes.func.isRequired,
   extraClass: PropTypes.string.isRequired
 };

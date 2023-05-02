@@ -1,6 +1,6 @@
 import checkResponse from "./checkResponse";
 
-export const getIngredients = (url) => {
+export const getIngredientsRequest = (url) => {
   return fetch(url).then((res) => checkResponse(res));
 };
 

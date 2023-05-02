@@ -11,17 +11,14 @@
 }
 
 .list {
-  height: 464px;
-  overflow-y: scroll;
+  max-height: 464px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.element {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.scroll {
+  overflow-y: scroll;
 }
 
 .cost {

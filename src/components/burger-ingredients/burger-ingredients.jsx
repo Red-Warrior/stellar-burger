@@ -1,9 +1,10 @@
-import React, { memo, useContext } from "react";
+import React, { memo } from "react";
+import { useSelector } from 'react-redux';
+import { getStoreIngredients } from "../../services/ingredients/selectors"
+
 import IngredientsMenu from "../ingredients-menu/ingredients-menu";
 import Category from "../category/category";
 import styles from "./burger-ingredients.module.css";
-
-import { IngredientsContext } from "../../services/appContext";
 
 const titles = {
   bun: 'Булки',
@@ -12,7 +13,7 @@ const titles = {
 };
 
 const BurgerIngredients = memo(() => {
-  const ingredients = useContext(IngredientsContext);
+  const {ingredients} = useSelector(getStoreIngredients);
 
   const ingredientsSets = ingredients.reduce((acc, item) => {
     if (!acc[item.type]) {
@@ -28,8 +29,9 @@ const BurgerIngredients = memo(() => {
       <IngredientsMenu titles={titles} />
       <div className={`${styles.container} custom-scroll`}>
         {
-          ["bun", "sauce", "main"].map((type) => (
+          ["bun", "main", "sauce"].map((type) => (
               <Category
+                extraClass={type}
                 key={type}
                 title={titles[type]}
                 ingredients={ingredientsSets[type]}

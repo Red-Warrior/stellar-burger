@@ -4,9 +4,9 @@ import ingredientsPropTypes from "../../utils/ingredientsPropTypes";
 import Card from "../card/card";
 import styles from "./category.module.css";
 
-const Category = memo(({title, ingredients}) => {
+const Category = memo(({title, ingredients, extraClass}) => {
   return (
-    <section className="mt-10">
+    <section className={`mt-10 ${extraClass}`}>
       <h2 className={`${styles.title} text text_type_main-medium mb-6`}>{title}</h2>
       <div className={`${styles.list} pl-4 pr-4`}>
         {

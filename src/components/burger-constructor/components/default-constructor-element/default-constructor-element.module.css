@@ -1,0 +1,33 @@
+.constructorElement {
+  padding: 16px 24px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--common-border-radius-s);
+  background: var(--background-element);
+  max-width: 536px;
+  width: 100%;
+  min-height: 80px;
+  font-family: 'Jet Brains Mono', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: #F2F2F3;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+
+.constructorElement:hover {
+  border: 3px dashed var(--colors-interface-accent);
+}
+
+.top {
+  border-radius: var(--top-constructor-item-border-radius);
+}
+
+.bottom {
+  border-radius: var(--bottom-constructor-item-border-radius);
+}
+
+.hover {
+  border: 3px dashed var(--colors-interface-accent);
+}

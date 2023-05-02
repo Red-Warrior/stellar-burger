@@ -1,145 +1,184 @@
-import React, { memo, useReducer, useContext, useMemo, useEffect } from "react";
+import React, { memo, useMemo, useState, useEffect, useRef } from "react";
+import { nanoid } from "nanoid";
+import { useDrop } from 'react-dnd';
+import { useDispatch, useSelector } from 'react-redux';
+import { getChosenIngredients } from "../../services/burger-constructor/selectors"
+import { OPEN_MODAL, SET_MODAL_TYPE } from "../../services/current-ingredient/actions";
+import {
+  SET_STUFFING_INGREDIENT,
+  SET_BUN,
+  SET_ORDER_NUMBER
+} from "../../services/burger-constructor/actions";
+import { INCREASE_INGREDIENTS_COUNT } from "../../services/ingredients/actions";
+import { GET_ORDER_INGREDIENTS_FAILED } from "../../services/order/actions";
+
 import {
   ConstructorElement,
   CurrencyIcon,
-  DragIcon,
   Button
 } from "@ya.praktikum/react-developer-burger-ui-components";
+import DefaultConstructorElement from "./components/default-constructor-element/default-constructor-element";
+import ConstructorIngredient from "./components/constructor-ingredient/constructor-ingredient";
 import { postOrder } from "../../utils/api";
-import { getRandNumber, getRandArray } from "../../utils/gerRandom";
 import styles from "./burger-constructor.module.css";
 
-import { IngredientsContext } from "../../services/appContext";
-import { ModalContext } from "../../services/modalContext";
-import { OrderNumberContext } from "../../services/orderNumberContext";
-
-function getTotalPrice(bun, stuffing) {
-  return stuffing.reduce((acc, item) => acc + item.price, 0) + bun.price * 2;
-}
-
-const ingredientsInitialState = {bun: {}, stuffing: [], totalPrice: 0};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "set":
-      const bun = action.payload.bun[getRandNumber(action.payload.bun.length - 1)];
-      const stuffing = getRandArray(action.payload.stuffing, 10);
-      return {
-        bun,
-        stuffing,
-        totalPrice: getTotalPrice(bun, stuffing)
-      };
-    case "reset":
-      return ingredientsInitialState;
-    default:
-      throw new Error(`Wrong type of action: ${action.type}`);
-  }
-}
-
 const BurgerConstructor = memo(() => {
+  const dispatch = useDispatch();
 
-  const ingredients = useContext(IngredientsContext);
-  const handleOpenModal = useContext(ModalContext);
-  const {setOrderNumber} = useContext(OrderNumberContext);
+  const stuffingContainer = useRef(null);
 
-  const [ingredientsState, ingredientsDispatcher] = useReducer(reducer, ingredientsInitialState, undefined);
+  const [isScroll, setIsScroll] = useState(false);
+
+  const ingredients = useSelector(getChosenIngredients);
+  const {bun, stuffing} = ingredients;
+
+  const isPrice = () => !!bun || !!stuffing.length;
+
+  const chosenIngredientsId = () => {
+    if (!bun) {
+      return stuffing.map(item => item._id);
+    }
+    if (!stuffing.length) {
+      return bun._id;
+    }
+    return [bun, ...stuffing].map(item => item._id);
+  };
+
+  const totalPrice = useMemo(() => {
+    if (!bun && !stuffing.length) {
+      return 0;
+    }
+
+    let totalPrice = stuffing.reduce((acc, item) => acc + item?.price, 0);
+    if (bun) {
+      totalPrice += bun.price * 2;
+    }
+    return totalPrice;
+  }, [bun, stuffing]);
+
+  useEffect(() => {
+    if (stuffingContainer.current.clientHeight >= 464) {
+      setIsScroll(true)
+    }
+  }, [setIsScroll]);
 
   const makeOrder = (e) => {
     e.preventDefault();
 
-    const ingredientsId = [ingredientsState.bun, ...ingredientsState.stuffing].map(item => item._id);
-
-    postOrder(`${process.env.REACT_APP_BURGER_API_URL}/orders`, {
-      method: "POST",
-      body: JSON.stringify({ingredients: ingredientsId}),
-      headers: {"Content-type": "application/json; charset=UTF-8"}
-    })
-      .then(payload => {
-        setOrderNumber(payload.order.number)
-        handleOpenModal();
+    if (isPrice()) {
+      postOrder(`${process.env.REACT_APP_BURGER_API_URL}/orders`, {
+        method: "POST",
+        body: JSON.stringify({ingredients: chosenIngredientsId()}),
+        headers: {"Content-type": "application/json; charset=UTF-8"}
       })
-      .catch(e => {
-        console.log(e);
-      });
+        .then(res => {
+          dispatch({type: SET_MODAL_TYPE, payload: "orderDetails"})
+          dispatch({type: SET_ORDER_NUMBER, payload: res.order.number});
+          dispatch({type: OPEN_MODAL});
+        })
+        .catch(e => {
+          dispatch({type: GET_ORDER_INGREDIENTS_FAILED});
+          console.log(e);
+        });
+    } else {
+      alert("Соберите бургер прежде чем оформлять заказ!");
+    }
   }
 
-  const ingredientsSet = useMemo(() => ingredients.reduce((acc, item) => {
-    if (!acc.bun && !acc.stuffing) {
-      acc.bun = [];
-      acc.stuffing = [];
-    }
-    if (item.type !== "bun") {
-      acc.stuffing.push(item);
-    } else {
-      acc.bun.push(item);
-    }
-    return acc;
-  }, {}), [ingredients]);
+  const [{isOverCurrent}, dropTargetRefBun] = useDrop({
+    accept: "bun",
+    drop(item) {
+      dispatch({type: SET_BUN, payload: item})
+      dispatch({type: INCREASE_INGREDIENTS_COUNT, payload: item.name})
+    },
+    collect: monitor => ({
+      isOverCurrent: monitor.isOver({shallow: true}),
+    })
+  });
 
-  useEffect(() => {
-
-    ingredientsDispatcher({type: "set", payload: ingredientsSet});
-  }, [ingredientsSet]);
+  const [{isHover}, dropTargetRef] = useDrop({
+    accept: "stuffing",
+    drop(item) {
+      if (!item.sortId) {
+        dispatch({type: SET_STUFFING_INGREDIENT, payload: {...item, sortId: nanoid(10)}})
+        dispatch({type: INCREASE_INGREDIENTS_COUNT, payload: item.name})
+      }
+    },
+    collect: monitor => ({
+      isHover: monitor.isOver(),
+    })
+  });
 
   const bunStyle = `${styles.bun} ml-8`;
-  const {bun, stuffing, totalPrice} = ingredientsState;
 
   return (
     <div className={`${styles.constructor} pt-25`}>
-      {
-        ingredientsState.totalPrice && (
-          <>
-            <div className={`${styles.ingredients} mb-10 ml-4`}>
-              <ConstructorElement
-                type="top"
-                isLocked={true}
-                text={`${bun.name} (верх)`}
-                price={bun.price}
-                thumbnail={bun.image_mobile}
-                extraClass={bunStyle}
-              />
-              <div className={`${styles.list} custom-scroll pr-2`}>
-                {
-                  stuffing.map((item, i) => {
-                    return (
-                      <div className={styles.element} key={item._id + i}>
-                        <DragIcon type="primary" />
-                        <ConstructorElement
-                          text={item.name}
-                          price={item.price}
-                          thumbnail={item.image_mobile}
-                          extraClass="ml-2"
-                        />
-                      </div>
-                    )
-                  })
-                }
-              </div>
-              <ConstructorElement
-                type="bottom"
-                isLocked={true}
-                text={`${bun.name} (низ)`}
-                price={bun.price}
-                thumbnail={bun.image_mobile}
-                extraClass={bunStyle}
-              />
-            </div>
-
-            <div className={`${styles.cost} mr-4`}>
-              <span className="text text_type_digits-medium mr-2">{totalPrice}</span>
-              <CurrencyIcon type="primary" />
-              <Button
-                extraClass="ml-10"
-                type="primary"
-                htmlType="submit"
-                size="large"
-                onClick={makeOrder}
-              >
-                Оформить заказ
-              </Button>
-            </div>
-          </>)
-      }
+      <div ref={dropTargetRefBun} className={`${styles.ingredients} mb-10 ml-4`}>
+        {
+          !bun ?
+            <DefaultConstructorElement
+              extraClass={bunStyle}
+              isHover={isOverCurrent}
+              type="top"
+              text="Выберите булочку" />
+            :
+            <ConstructorElement
+              type="top"
+              isLocked={true}
+              text={`${bun.name} (верх)`}
+              price={bun.price}
+              thumbnail={bun.image_mobile}
+              extraClass={bunStyle}
+            />
+        }
+        <div ref={elem => {
+          dropTargetRef(elem);
+          stuffingContainer.current = elem;
+        }} className={`${styles.list} ${isScroll ? styles.scroll : ""} custom-scroll pr-2`}>
+          {
+            !stuffing.length
+              ?
+              <DefaultConstructorElement extraClass={bunStyle} isHover={isHover} text="Выберите начинку" />
+              :
+              stuffing.map((item, index) => <ConstructorIngredient
+                key={item.sortId}
+                item={item}
+                index={index}
+                sortId={item.sortId}
+              />)
+          }
+        </div>
+        {
+          !bun ?
+            <DefaultConstructorElement
+              extraClass={bunStyle}
+              isHover={isOverCurrent}
+              type="bottom"
+              text="Выберите булочку" />
+            :
+            <ConstructorElement
+              type="bottom"
+              isLocked={true}
+              text={`${bun.name} (низ)`}
+              price={bun.price}
+              thumbnail={bun.image_mobile}
+              extraClass={bunStyle}
+            />
+        }
+      </div>
+      <div className={`${styles.cost} mr-4`}>
+        <span className="text text_type_digits-medium mr-2">{totalPrice}</span>
+        <CurrencyIcon type="primary" />
+        <Button
+          extraClass="ml-10"
+          type="primary"
+          htmlType="submit"
+          size="large"
+          onClick={makeOrder}
+        >
+          Оформить заказ
+        </Button>
+      </div>
     </div>
   );
 });
