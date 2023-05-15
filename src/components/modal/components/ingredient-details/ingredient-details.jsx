@@ -1,24 +1,48 @@
-import React, { memo } from "react";
-import { useSelector } from "react-redux";
-import { getStoreIngredientsConstructor } from "../../../../services/current-ingredient/selectors";
+import React, { useMemo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import styles from "./ingredient-details.module.css";
+import { getIngredients } from "../../../../services/ingredients/actions";
+import { getStoreIngredients } from "../../../../services/ingredients/selectors";
 
-const IngredientDetails = memo(() => {
-  const {selectedIngredient} = useSelector(getStoreIngredientsConstructor);
-  const {calories, proteins, fat, carbohydrates, name, image_large} = selectedIngredient;
+const IngredientDetails = () => {
+  const {ingredients} = useSelector(getStoreIngredients);
+  const {id} = useParams();
+  const dispatch = useDispatch();
 
-  const property = {
-    "Калории,ккал": calories,
-    "Белки, г": proteins,
-    "Жиры, г": fat,
-    "Углеводы, г": carbohydrates
-  }
+  const currentIngredient = useMemo(() => {
+    if (ingredients.length) {
+      return ingredients.find(ingredient => ingredient._id === id)
+    }
+    return undefined;
+  }, [ingredients, id]);
 
-  return (
+  const property = useMemo(() => {
+    if (currentIngredient) {
+      return {
+        "Калории,ккал": currentIngredient.calories,
+        "Белки, г": currentIngredient.proteins,
+        "Жиры, г": currentIngredient.fat,
+        "Углеводы, г": currentIngredient.carbohydrates
+      }
+    }
+    return undefined;
+  }, [currentIngredient]);
+
+  useEffect(
+    () => {
+      if (!ingredients.length) {
+        dispatch(getIngredients());
+      }
+    },
+    [dispatch, ingredients]
+  );
+
+  return (currentIngredient && property) && (
     <div className={styles.container}>
-      <img src={image_large} alt={`Изображение: ${name}`} />
+      <img src={currentIngredient.image_large} alt={`Изображение: ${currentIngredient.name}`} />
       <p className="text text_type_main-medium mt-4">
-        {name}
+        {currentIngredient.name}
       </p>
       <ul className={`${styles.set} mt-8`}>
         {
@@ -30,8 +54,7 @@ const IngredientDetails = memo(() => {
           )
         }
       </ul>
-    </div>
-  );
-});
+    </div>)
+};
 
 export default IngredientDetails;

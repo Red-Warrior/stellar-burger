@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from "react-router-dom";
 import './index.css';
-import App from './components/app/app';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -11,7 +12,6 @@ import { rootReducer } from './services';
 import thunk from 'redux-thunk';
 
 const enhancer = composeWithDevTools(applyMiddleware(thunk));
-
 const store = createStore(rootReducer, enhancer);
 
 const root = ReactDOM.createRoot(
@@ -21,7 +21,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>
 );

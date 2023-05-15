@@ -14,28 +14,29 @@ import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import ModalOverlay from "./components/modal-overlay/modal-overlay";
 import styles from "./modal.module.css";
 import { getStoreIngredientsConstructor } from "../../services/current-ingredient/selectors";
+import { useNavigate } from "react-router-dom";
 
 const modalRoot = document.getElementById("react-modals");
 
 const Modal = memo(({children, title = "", extraClass}) => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {modalType} = useSelector(getStoreIngredientsConstructor);
 
   const handleCloseModal = () => {
-    dispatch({type: CLOSE_MODAL});
-    dispatch({type: DELETE_MODAL_TYPE});
+    if (modalType) {
+      dispatch({type: CLOSE_MODAL});
+      dispatch({type: DELETE_MODAL_TYPE});
 
-    if (modalType === "ingredientDetails") {
-      dispatch({type: DELETE_SELECTED_INGREDIENT});
-      return
-    }
-    if (modalType === "orderDetails") {
       dispatch({type: REMOVE_ALL_STUFFING});
       dispatch({type: RESET_INGREDIENTS_COUNTER});
       dispatch({type: DELETE_ORDER_NUMBER});
     }
+
+    dispatch({type: DELETE_SELECTED_INGREDIENT});
+    navigate(-1);
   };
 
   const keyHandler = (e) => {

@@ -1,0 +1,41 @@
+.profile {
+  width: 1240px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 60px;
+}
+
+.navBar {
+  grid-column: 1/2;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.navItem {
+  line-height: 64px;
+  height: 64px;
+  text-decoration: 0;
+}
+
+.annotation {
+  padding-bottom: 0;
+  opacity: 0.4;
+}
+
+.fieldsContainer {
+  grid-column: 2/3;
+}
+
+.dashboard {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.cancel {
+  color: var(--colors-interface-accent);
+  cursor: pointer;
+}

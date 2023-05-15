@@ -2,20 +2,18 @@ import React, { memo } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { getStoreIngredients } from "../../services/ingredients/selectors";
 import { getChosenIngredients } from "../../services/burger-constructor/selectors";
-import {
-  OPEN_MODAL,
-  SET_SELECTED_INGREDIENT,
-  SET_MODAL_TYPE
-} from "../../services/current-ingredient/actions";
+import { SET_SELECTED_INGREDIENT } from "../../services/current-ingredient/actions";
 
 import { useDrag } from 'react-dnd';
-
+import { useLocation, useNavigate } from "react-router-dom";
 import ingredientsPropTypes from "../../utils/ingredientsPropTypes";
 import { CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./card.module.css";
 
 const Card = memo(({ingredient}) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const ingredientCount = useSelector(getStoreIngredients).ingredientsCounter[ingredient.name];
   const hasBun = useSelector(getChosenIngredients).bun?.name;
@@ -28,17 +26,18 @@ const Card = memo(({ingredient}) => {
     })
   });
 
-  const handleOpenModal = (ingredient) => {
+  const handleOpenModal = (e) => {
+    e.preventDefault();
+
     dispatch({type: SET_SELECTED_INGREDIENT, payload: ingredient});
-    dispatch({type: SET_MODAL_TYPE, payload: "ingredientDetails"})
-    dispatch({type: OPEN_MODAL});
+    navigate(`ingredients/${ingredient._id}`, {state: {background: location}});
   };
 
   return (
     <div
       ref={dragRef}
       className={styles.card}
-      onClick={() => handleOpenModal(ingredient)}>
+      onClick={(e) => handleOpenModal(e)}>
       <img
         style={{opacity}}
         width="240"

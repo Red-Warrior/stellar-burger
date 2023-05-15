@@ -27,3 +27,7 @@
 .icon {
   margin-left: 178px;
 }
+
+.logo {
+  cursor: pointer;
+}
