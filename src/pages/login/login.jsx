@@ -7,10 +7,7 @@ import { getUserData } from "../../services/user/selectors";
 
 const LoginPage = () => {
   const {userName} = useSelector(getUserData);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+  const [userData, setUserData] = useState({email: "", password: ""});
   const [passwordVisibility, setPasswordVisibility] = useState("password");
 
   const dispatch = useDispatch();
@@ -18,21 +15,18 @@ const LoginPage = () => {
 
   const handleChange = (e) => {
     const target = e.target;
-
-    if (target.name === "email") {
-      setEmail(target.value);
-    } else {
-      setPassword(target.value);
-    }
+    setUserData((prevState) => ({
+      ...prevState,
+      [target.name]: target.value
+    }));
   };
 
   const login = (e) => {
     e.preventDefault();
-
-    if (email && password) {
-      dispatch(loginUserRequest({email, password}));
+    if (userData.email && userData.password) {
+      dispatch(loginUserRequest(userData));
     } else {
-      alert("Проверьте, что поля: E-mail и Пароль заполнены");
+      console.warn("Проверьте, что поля: E-mail и Пароль заполнены");
     }
   }
 
@@ -43,41 +37,42 @@ const LoginPage = () => {
     if (location.state?.from) {
       return <Navigate to={location.state.from.pathname} replace />
     }
-
     return <Navigate to="/" replace />
   }
 
   return (
     <main className="stellarContainer">
       <h2 className="text text_type_main-medium mb-6">Вход</h2>
-      <Input
-        extraClass="stellarInput"
-        name="email"
-        type="email"
-        value={email}
-        placeholder="E-mail"
-        onChange={(e) => handleChange(e)}
-      />
-      <Input
-        extraClass="stellarInput"
-        name="password"
-        type={passwordVisibility}
-        value={password}
-        placeholder="Пароль"
-        icon={passwordVisibility === "password" ? "ShowIcon" : "HideIcon"}
-        onChange={(e) => handleChange(e)}
-        onIconClick={() => setPasswordVisibility((prevState) => {
-          return prevState === "password" ? "text" : "password";
-        })}
-      />
-      <Button
-        extraClass="mb-20"
-        type="primary"
-        size="medium"
-        htmlType="submit"
-        onClick={(e) => login(e)}>
-        Войти
-      </Button>
+      <form onSubmit={(e) => login(e)}>
+        <Input
+          extraClass="stellarInput"
+          name="email"
+          type="email"
+          value={userData.email}
+          placeholder="E-mail"
+          onChange={(e) => handleChange(e)}
+        />
+        <Input
+          extraClass="stellarInput"
+          name="password"
+          type={passwordVisibility}
+          value={userData.password}
+          placeholder="Пароль"
+          icon={passwordVisibility === "password" ? "ShowIcon" : "HideIcon"}
+          onChange={(e) => handleChange(e)}
+          onIconClick={() => setPasswordVisibility((prevState) =>
+            prevState === "password" ? "text" : "password"
+          )}
+        />
+        <Button
+          extraClass="mb-20"
+          type="primary"
+          size="medium"
+          htmlType="submit"
+        >
+          Войти
+        </Button>
+      </form>
       <p className="stellarTextContainer mb-4">
         <span className={descriptionTextStyle}>
           Вы — новый пользователь?

@@ -1,46 +1,29 @@
 import React, { useState } from 'react';
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Input, Button } from "@ya.praktikum/react-developer-burger-ui-components";
-import { signUp } from "../../utils/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../services/user/selectors";
-import { SET_USER_SUCCESS } from "../../services/user/actions";
+import { registerUserRequest } from "../../services/user/actions";
 
 const RegisterPage = () => {
-  const {nameStore} = useSelector(getUserData);
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {userName} = useSelector(getUserData);
+  const [passwordVisibility, setPasswordVisibility] = useState("password");
+  const [userData, setUserData] = useState({name: "", email: "", password: ""});
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const target = e.target;
-
-    if (target.name === "name") {
-      setName(target.value);
-    } else if (target.name === "email") {
-      setEmail(target.value);
-    } else {
-      setPassword(target.value);
-    }
+    setUserData((prevState) => ({
+      ...prevState,
+      [target.name]: target.value
+    }));
   };
 
-  const registration = async (e) => {
+  const registration = (e) => {
     e.preventDefault();
-    if (name && email && password) {
-
-      const user = await signUp({name, email, password});
-
-      console.log(user);
-
-      if (user) {
-        dispatch({type: SET_USER_SUCCESS, payload: user})
-        alert(`Пользователь ${user.name} успешно зарегистрирован!`);
-        navigate("/");
-      }
+    if (userData.name && userData.email && userData.password) {
+      dispatch(registerUserRequest(userData));
     } else {
       alert("Проверьте, что поля: Имя, E-mail, Пароль заполнены");
     }
@@ -49,44 +32,50 @@ const RegisterPage = () => {
   const descriptionTextStyle = "text text_type_main-default text_color_inactive";
   const linkTextStyle = "text text_type_main-default ml-2";
 
-  if (nameStore) {
+  if (userName) {
     return <Navigate to="/" replace />
   }
 
+  const {name, email, password} = userData;
   return (
     <main className="stellarContainer">
       <h2 className="text text_type_main-medium mb-6">Регистрация</h2>
-      <Input
-        extraClass="stellarInput"
-        name="name"
-        type="text"
-        value={name}
-        placeholder="Имя"
-        onChange={(e) => handleChange(e)} />
-      <Input
-        extraClass="stellarInput"
-        name="email"
-        type="email"
-        value={email}
-        placeholder="E-mail"
-        onChange={(e) => handleChange(e)} />
-      <Input
-        extraClass="stellarInput"
-        name="password"
-        type="password"
-        value={password}
-        placeholder="Пароль"
-        icon="ShowIcon"
-        onChange={(e) => handleChange(e)} />
-      <Button
-        extraClass="mb-20"
-        type="primary"
-        size="medium"
-        htmlType="submit"
-        onClick={(e) => registration(e)}
-      >
-        Зарегистрироваться
-      </Button>
+      <form onSubmit={(e) => registration(e)}>
+        <Input
+          extraClass="stellarInput"
+          name="name"
+          type="text"
+          value={name}
+          placeholder="Имя"
+          onChange={(e) => handleChange(e)} />
+        <Input
+          extraClass="stellarInput"
+          name="email"
+          type="email"
+          value={email}
+          placeholder="E-mail"
+          onChange={(e) => handleChange(e)} />
+        <Input
+          extraClass="stellarInput"
+          name="password"
+          type={passwordVisibility}
+          value={password}
+          placeholder="Пароль"
+          icon={passwordVisibility === "password" ? "ShowIcon" : "HideIcon"}
+          onChange={(e) => handleChange(e)}
+          onIconClick={() => setPasswordVisibility((prevState) =>
+            prevState === "password" ? "text" : "password"
+          )}
+        />
+        <Button
+          extraClass="mb-20"
+          type="primary"
+          size="medium"
+          htmlType="submit"
+        >
+          Зарегистрироваться
+        </Button>
+      </form>
       <p className="stellarTextContainer">
         <span className={descriptionTextStyle}>
           Уже зарегистрированы?

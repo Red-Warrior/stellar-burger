@@ -1,117 +1,98 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { UPDATE_USER, RESET_USER } from "../../services/user/actions";
-import { editUserData } from "../../utils/auth";
-import { signOut } from "../../utils/auth";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Input, Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import { getUserData } from "../../services/user/selectors";
+import { logoutUserRequest, updateUserRequest } from "../../services/user/actions";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Input, Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./profile.module.css"
 import linkStyles from "../../components/app-header/components/router-link/router-link.module.css"
+
+const fieldsChecklist = {
+  name: "isNameEditable",
+  email: "isLoginEditable",
+  password: "isPasswordEditable"
+};
 
 const ProfilePage = () => {
   const {userName, userEmail} = useSelector(getUserData);
 
-  const nameRef = useRef();
-  const emailRef = useRef();
-  const passwordRef = useRef();
+  const [userData, setUserData] = useState({
+    name: userName,
+    email: userEmail,
+    password: "*****"
+  });
 
-  const [name, setName] = useState(userName);
-  const [email, setEmail] = useState(userEmail);
-  const [password, setPassword] = useState("*****");
+  const [isFieldsEditable, setFieldsEditable] = useState({
+    isNameEditable: false,
+    isLoginEditable: false,
+    isPasswordEditable: false
+  });
 
-  const [isNameEditable, setIsEditable] = useState(false);
-  const [isLoginEditable, setIsLoginEditable] = useState(false);
-  const [isPasswordEditable, setIsPasswordEditable] = useState(false);
-
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const setEditableField = (e) => {
-    e.preventDefault();
-
-    const target = e.currentTarget.parentNode.childNodes[1].name;
-
-    if (target === "name") {
-      setIsEditable((prevState) => !prevState);
-      if (!isNameEditable) {
-        setName(userName);
-      }
-      setTimeout(() => nameRef.current.focus());
-    }
-    if (target === "email") {
-      setIsLoginEditable((prevState) => !prevState);
-      if (!isLoginEditable) {
-        setEmail(userEmail);
-      }
-      setTimeout(() => emailRef.current.focus());
-    }
-    if (target === "password") {
-      setIsPasswordEditable((prevState) => !prevState);
-      if (!isPasswordEditable) {
-        setPassword("*****");
-      }
-      setTimeout(() => passwordRef.current.focus());
-
-    }
-  }
 
   const handleChange = (e) => {
     const target = e.target;
 
-    if (target.name === "name") {
-      setName(target.value);
-    } else if (target.name === "email") {
-      setEmail(target.value);
-    } else {
-      setPassword(target.value);
-    }
+    setUserData((prevState) => ({
+      ...prevState,
+      [target.name]: target.value
+    }));
   };
 
+  const setEditableField = (e) => {
+    e.preventDefault();
+    const target = e.currentTarget.parentNode.childNodes[1];
+
+    setFieldsEditable((prevState) => ({
+      ...prevState,
+      [fieldsChecklist[target.name]]: !prevState[fieldsChecklist[target.name]],
+    }));
+    setTimeout(() => target.focus());
+  }
+
   const canselEdit = () => {
-    setIsEditable(false);
-    setIsLoginEditable(false);
-    setIsPasswordEditable(false);
+    setFieldsEditable({
+      isNameEditable: false,
+      isLoginEditable: false,
+      isPasswordEditable: false
+    })
   }
 
   const resetFields = (e) => {
     e.preventDefault();
-    setName(userName);
-    setEmail(userEmail);
-    setPassword("*****");
-
+    setUserData({
+      name: userName,
+      email: userEmail,
+      password: "*****"
+    });
     canselEdit();
   };
 
-  const editUserRequest = async (e) => {
+  const editUserRequest = (e) => {
     e.preventDefault();
-
-    if (password === "*****") {
+    if (userData.password === "*****") {
       return alert("Введите ваш старый или новый пароль");
     }
-
-    const res = await editUserData({name, email, password});
-    if (res.success) {
-      dispatch({type: UPDATE_USER, payload: res.user});
-    }
-
-    canselEdit();
-    alert("Данные пользователя успешно изменены!")
+    dispatch(updateUserRequest(userData));
   };
+
+  const previousNameOfUser = useRef(userName);
+  useEffect(() => {
+    if (userName && userName !== previousNameOfUser.current) {
+      canselEdit();
+    }
+  }, [userName]);
 
   const logout = async (e) => {
     e.preventDefault();
-
-    const res = await signOut();
-
-    if (res.success) {
-      dispatch({type: RESET_USER});
-      alert("Успешно выполнен выход из системы!")
-      navigate("/");
-    }
+    navigate("", {state: {from: location}, replace: true});
+    dispatch(logoutUserRequest());
   };
 
   const linkTextStyle = "text text_type_main-medium text_color_inactive"
+  const {isNameEditable, isLoginEditable, isPasswordEditable} = isFieldsEditable;
 
   return (
     <main className={`${styles.profile} mt-30`}>
@@ -137,14 +118,15 @@ const ProfilePage = () => {
           В этом разделе вы можете<br />изменить свои персональные данные
         </p>
       </nav>
-
-      <section className={styles.fieldsContainer}>
+      <form
+        className={styles.fieldsContainer}
+        onSubmit={(e) => editUserRequest(e)}
+      >
         <Input
-          ref={nameRef}
           extraClass="stellarInput"
           type="text"
           name="name"
-          value={name}
+          value={userData.name}
           placeholder="Имя"
           disabled={!isNameEditable}
           icon={isNameEditable ? "CloseIcon" : "EditIcon"}
@@ -152,11 +134,10 @@ const ProfilePage = () => {
           onIconClick={(e) => setEditableField(e)}
         />
         <Input
-          ref={emailRef}
           extraClass="stellarInput"
           type="email"
           name="email"
-          value={email}
+          value={userData.email}
           placeholder="Логин"
           disabled={!isLoginEditable}
           icon={isLoginEditable ? "CloseIcon" : "EditIcon"}
@@ -164,34 +145,35 @@ const ProfilePage = () => {
           onIconClick={(e) => setEditableField(e)}
         />
         <Input
-          ref={passwordRef}
           extraClass="stellarInput"
           type="password"
           name="password"
-          value={password}
+          value={userData.password}
           placeholder="Пароль"
           disabled={!isPasswordEditable}
           icon={isPasswordEditable ? "CloseIcon" : "EditIcon"}
           onChange={(e) => handleChange(e)}
           onIconClick={(e) => setEditableField(e)}
         />
-
         {
           (isNameEditable || isLoginEditable || isPasswordEditable) && (
             <div className={styles.dashboard}>
               <span
                 className={`${styles.cancel} mr-6`}
-                onClick={(e) => resetFields(e)}>Отмена</span>
+                onClick={(e) => resetFields(e)}
+              >
+                Отмена
+              </span>
               <Button
                 type="primary"
                 size="medium"
                 htmlType="submit"
-                onClick={(e) => editUserRequest(e)}>
+              >
                 Сохранить
               </Button>
             </div>)
         }
-      </section>
+      </form>
     </main>
   );
 };

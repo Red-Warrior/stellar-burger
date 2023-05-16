@@ -7,7 +7,7 @@ import ProfilePage from "./profile/profile";
 import RegisterPage from "./register/register";
 import ResetPasswordPage from "./reset-password/reset-password";
 import ModalIngredientPage from "./modal-ingredient/modal-ingredient";
-import LayoutPage from "./layout/layout";
+import LayoutPage from "../components/layout/layout";
 
 export {
   ConstructorPage,

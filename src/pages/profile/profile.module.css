@@ -15,9 +15,15 @@
 }
 
 .navItem {
+  transition: var(--common-transition);
   line-height: 64px;
   height: 64px;
   text-decoration: 0;
+}
+
+.navItem:hover {
+  color: var(--text-primary-color);
+  opacity: 0.9;
 }
 
 .annotation {

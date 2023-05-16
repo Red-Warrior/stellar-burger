@@ -14,7 +14,6 @@ const ResetPasswordPage = () => {
 
   const makePasswordForgetRequest = async (e) => {
     e.preventDefault();
-
     if (email) {
       const res = await restorePasswordRequest({email})
       if (res.success) {
@@ -31,26 +30,26 @@ const ResetPasswordPage = () => {
   if (userName) {
     return <Navigate to="/" replace />
   }
-
   return (
     <main className="stellarContainer">
       <h2 className="text text_type_main-medium mb-6">Восстановление пароля</h2>
-      <Input
-        extraClass="stellarInput"
-        type="email"
-        value={email}
-        placeholder="Укажите e-mail"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Button
-        extraClass="mb-20"
-        type="primary"
-        size="medium"
-        htmlType="submit"
-        onClick={(e) => makePasswordForgetRequest(e)}
-      >
-        Восстановить
-      </Button>
+      <form onSubmit={(e) => makePasswordForgetRequest(e)}>
+        <Input
+          extraClass="stellarInput"
+          type="email"
+          value={email}
+          placeholder="Укажите e-mail"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Button
+          extraClass="mb-20"
+          type="primary"
+          size="medium"
+          htmlType="submit"
+        >
+          Восстановить
+        </Button>
+      </form>
       <p className="stellarTextContainer">
         <span className={descriptionTextStyle}
         >

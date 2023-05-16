@@ -28,12 +28,11 @@ const ForgotPasswordPage = () => {
 
   const makePasswordResetRequest = async (e) => {
     e.preventDefault();
-
     if (password && token) {
       const res = await resetPasswordRequest({password, token});
 
       if (res.success) {
-        alert("Пароль успешно изменён");
+        console.log("Пароль успешно изменён");
         navigate("/");
       }
     } else {
@@ -56,35 +55,36 @@ const ForgotPasswordPage = () => {
   return (
     <main className="stellarContainer">
       <h2 className="text text_type_main-medium mb-6">Восстановление пароля</h2>
-      <Input
-        extraClass="stellarInput"
-        type={passwordVisibility}
-        name="password"
-        value={password}
-        placeholder="Введите новый пароль"
-        icon={passwordVisibility === "password" ? "ShowIcon" : "HideIcon"}
-        onChange={(e) => handleChange(e)}
-        onIconClick={() => setPasswordVisibility((prevState) => {
-          return prevState === "password" ? "text" : "password";
-        })}
-      />
-      <Input
-        extraClass="stellarInput"
-        type="text"
-        name="token"
-        value={token}
-        placeholder="Введите код из письма"
-        onChange={(e) => handleChange(e)}
-      />
-      <Button
-        extraClass="mb-20"
-        type="primary"
-        size="medium"
-        htmlType="submit"
-        onClick={(e) => makePasswordResetRequest(e)}
-      >
-        Сохранить
-      </Button>
+      <form onSubmit={(e) => makePasswordResetRequest(e)}>
+        <Input
+          extraClass="stellarInput"
+          type={passwordVisibility}
+          name="password"
+          value={password}
+          placeholder="Введите новый пароль"
+          icon={passwordVisibility === "password" ? "ShowIcon" : "HideIcon"}
+          onChange={(e) => handleChange(e)}
+          onIconClick={() => setPasswordVisibility((prevState) =>
+            prevState === "password" ? "text" : "password"
+          )}
+        />
+        <Input
+          extraClass="stellarInput"
+          type="text"
+          name="token"
+          value={token}
+          placeholder="Введите код из письма"
+          onChange={(e) => handleChange(e)}
+        />
+        <Button
+          extraClass="mb-20"
+          type="primary"
+          size="medium"
+          htmlType="submit"
+        >
+          Сохранить
+        </Button>
+      </form>
       <p className="stellarTextContainer">
         <span className={descriptionTextStyle}
         >

@@ -27,9 +27,9 @@ const RouterLink = (
 export default RouterLink;
 
 RouterLink.propTypes = {
-  children: PropTypes.element,
-  iconPrimary: PropTypes.element,
-  iconSecondary: PropTypes.element,
-  to: PropTypes.string,
+  children: PropTypes.element.isRequired,
+  iconPrimary: PropTypes.element.isRequired,
+  iconSecondary: PropTypes.element.isRequired,
+  to: PropTypes.string.isRequired,
   extraClass: PropTypes.string,
 };

@@ -9,10 +9,11 @@ import {
   resetPassword,
 } from "./api";
 import { setCookie, deleteCookie, getCookie } from "./cookie";
+import checkResponse from "./checkResponse";
 
 export const renewToken = async (payload) => {
   return await updateToken(payload)
-    .then(res => res.json())
+    .then(checkResponse)
     .then(data => {
       if (data.success) {
         const {accessToken, refreshToken} = data;
@@ -23,35 +24,20 @@ export const renewToken = async (payload) => {
       }
     })
     .catch((e) => {
-      console.err(e)
+      return Promise.reject(e);
     });
 };
 
 export const checkAuthFetch = async (request, payload, refreshTokenRequest) => {
-  const res = await request(payload)
-    .then(res => res.json())
-    .catch((e) => {
-      console.log(e)
-    });
-
-  console.log(res);
-
-  if (res.success) {
-    return res;
-  }
-
-  if (!res.success && res.message === "jwt expired") {
-    await refreshTokenRequest({token: getCookie('refreshToken')});
-    const res = await request(payload)
-      .then(res => res.json())
-      .catch((e) => {
-        console.log(e)
-      });
-
-    if (res.success) {
-      return res;
-    }
-  }
+  return await request(payload)
+    .then(checkResponse)
+    .catch(async (e) => {
+      if (e.message === "jwt expired") {
+        await refreshTokenRequest({token: getCookie('refreshToken')});
+        return await request(payload).then(checkResponse);
+      }
+      return Promise.reject(e);
+    })
 };
 
 export const getUser = async () => {
@@ -71,53 +57,52 @@ export const editUserData = async (payload) => {
 };
 
 export const signUp = async (payload) => {
-  const res = await register(payload)
-    .then(res => res.json())
-    .catch(e => {
-      console.log(e);
-    });
+  return await register(payload)
+    .then(checkResponse)
+    .then(res => {
+      if (res.success) {
+        const {user, accessToken, refreshToken} = res;
+        const authToken = accessToken.split('Bearer ')[1];
+        setCookie('token', authToken);
+        setCookie('refreshToken', refreshToken);
 
-  if (res.success) {
-    const {user, accessToken, refreshToken} = res;
-    const authToken = accessToken.split('Bearer ')[1];
-
-    setCookie('token', authToken);
-    setCookie('refreshToken', refreshToken);
-
-    return user;
-  }
+        return user;
+      }
+    })
+    .catch(e => Promise.reject(e));
 }
 
 export const signIn = async (payload) => {
   return await login(payload)
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        const {user, accessToken, refreshToken} = data;
+    .then(checkResponse)
+    .then(res => {
+      if (res.success) {
+        const {user, accessToken, refreshToken} = res;
         const authToken = accessToken.split('Bearer ')[1];
 
         setCookie('token', authToken);
         setCookie('refreshToken', refreshToken);
 
-        alert("Авторизация прошла успешно!");
+        console.log("Авторизация прошла успешно!");
         return user;
       }
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
     })
 };
 
 export const signOut = async () => {
-  const res = await logout({token: getCookie('refreshToken')})
-    .then(res => res.json())
+  return await logout({token: getCookie('refreshToken')})
+    .then(checkResponse)
+    .then(res => {
+      if (res.success) {
+        deleteCookie('token');
+        deleteCookie('refreshToken');
+        return res;
+      }
+    })
     .catch(e => {
-      console.log(e);
+      console.error(e);
     });
-
-  if (res.success) {
-    deleteCookie('token');
-    deleteCookie('refreshToken');
-    return res;
-  }
 };
