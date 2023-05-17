@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Input } from "@ya.praktikum/react-developer-burger-ui-components";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, Navigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../services/user/selectors";
-import { resetPasswordRequest } from "../../utils/auth";
+import {
+  RESET_PASSWORD_SUCCESS,
+  resetPasswordRequest
+} from "../../services/user/actions";
+import { CHANGED } from "../../services/user/constants";
 
 const ForgotPasswordPage = () => {
-  const {userName} = useSelector(getUserData);
+  const dispatch = useDispatch();
+  const location = useLocation();
+
+  const {
+    userName,
+    userResetPasswordRequest,
+    userResetPasswordStatus
+  } = useSelector(getUserData);
 
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
 
   const [passwordVisibility, setPasswordVisibility] = useState("password");
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const handleChange = (e) => {
     const target = e.target;
-
     if (target.name === "password") {
       setPassword(target.value);
     } else {
@@ -29,16 +36,15 @@ const ForgotPasswordPage = () => {
   const makePasswordResetRequest = async (e) => {
     e.preventDefault();
     if (password && token) {
-      const res = await resetPasswordRequest({password, token});
-
-      if (res.success) {
-        console.log("Пароль успешно изменён");
-        navigate("/");
-      }
+      dispatch(resetPasswordRequest({password, token}));
     } else {
       alert("Проверьте, что поле с новым паролем и кодом из письма заполнены");
     }
   }
+
+  useEffect(() => {
+    return () => dispatch({type: RESET_PASSWORD_SUCCESS, payload: null});
+  }, [dispatch]);
 
   const descriptionTextStyle = "text text_type_main-default text_color_inactive";
   const linkTextStyle = "text text_type_main-default ml-2";
@@ -50,6 +56,9 @@ const ForgotPasswordPage = () => {
 
   if (userName) {
     return <Navigate to="/" replace />
+  }
+  if (!userResetPasswordRequest && userResetPasswordStatus === CHANGED) {
+    return <Navigate to="/" />
   }
 
   return (

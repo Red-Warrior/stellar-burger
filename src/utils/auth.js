@@ -44,11 +44,11 @@ export const getUser = async () => {
   return await checkAuthFetch(fetchUser, undefined, renewToken);
 };
 
-export const restorePasswordRequest = async (payload) => {
+export const forgotPasswordRequest = async (payload) => {
   return await checkAuthFetch(restorePassword, payload, renewToken);
 };
 
-export const resetPasswordRequest = async (payload) => {
+export const dropPasswordRequest = async (payload) => {
   return await checkAuthFetch(resetPassword, payload, renewToken);
 };
 

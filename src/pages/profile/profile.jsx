@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../services/user/selectors";
 import { logoutUserRequest, updateUserRequest } from "../../services/user/actions";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Input, Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./profile.module.css"
 import linkStyles from "../../components/app-header/components/router-link/router-link.module.css"
@@ -14,6 +14,8 @@ const fieldsChecklist = {
 };
 
 const ProfilePage = () => {
+  const dispatch = useDispatch();
+
   const {userName, userEmail} = useSelector(getUserData);
 
   const [userData, setUserData] = useState({
@@ -28,9 +30,10 @@ const ProfilePage = () => {
     isPasswordEditable: false
   });
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const nameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+
 
   const handleChange = (e) => {
     const target = e.target;
@@ -78,6 +81,17 @@ const ProfilePage = () => {
     dispatch(updateUserRequest(userData));
   };
 
+  const logout = async (e) => {
+    e.preventDefault();
+    dispatch(logoutUserRequest());
+  };
+
+  useEffect(() => {
+    if (isFieldsEditable.isNameEditable) nameRef.current.focus();
+    if (isFieldsEditable.isLoginEditable) emailRef.current.focus();
+    if (isFieldsEditable.isPasswordEditable) passwordRef.current.focus();
+  }, [isFieldsEditable]);
+
   const previousNameOfUser = useRef(userName);
   useEffect(() => {
     if (userName && userName !== previousNameOfUser.current) {
@@ -85,11 +99,6 @@ const ProfilePage = () => {
     }
   }, [userName]);
 
-  const logout = async (e) => {
-    e.preventDefault();
-    navigate("", {state: {from: location}, replace: true});
-    dispatch(logoutUserRequest());
-  };
 
   const linkTextStyle = "text text_type_main-medium text_color_inactive"
   const {isNameEditable, isLoginEditable, isPasswordEditable} = isFieldsEditable;
@@ -123,6 +132,7 @@ const ProfilePage = () => {
         onSubmit={(e) => editUserRequest(e)}
       >
         <Input
+          ref={nameRef}
           extraClass="stellarInput"
           type="text"
           name="name"
@@ -134,6 +144,7 @@ const ProfilePage = () => {
           onIconClick={(e) => setEditableField(e)}
         />
         <Input
+          ref={emailRef}
           extraClass="stellarInput"
           type="email"
           name="email"
@@ -145,6 +156,7 @@ const ProfilePage = () => {
           onIconClick={(e) => setEditableField(e)}
         />
         <Input
+          ref={passwordRef}
           extraClass="stellarInput"
           type="password"
           name="password"
