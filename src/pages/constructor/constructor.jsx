@@ -7,17 +7,16 @@ import { getStoreIngredientsConstructor } from "../../services/current-ingredien
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 
-import AppHeader from "../app-header/app-header";
-import BurgerIngredients from "../burger-ingredients/burger-ingredients";
-import BurgerConstructor from "../burger-constructor/burger-constructor";
-import Modal from "../modal/modal";
-import IngredientDetails from "../modal/components/ingredient-details/ingredient-details";
-import OrderDetails from "../modal/components/order-details/order-details";
-import Spinner from "../spinner/spinner";
-import styles from "./app.module.css";
-import modalStyles from "../modal/modal.module.css";
+import BurgerIngredients from "../../components/burger-ingredients/burger-ingredients";
+import BurgerConstructor from "../../components/burger-constructor/burger-constructor";
+import Modal from "../../components/modal/modal";
+import IngredientDetails from "../../components/modal/components/ingredient-details/ingredient-details";
+import OrderDetails from "../../components/modal/components/order-details/order-details";
+import Spinner from "../../components/spinner/spinner";
+import styles from "./constructor.module.css";
+import modalStyles from "../../components/modal/modal.module.css";
 
-const App = () => {
+const BurgerConstructorDashboard = () => {
   const dispatch = useDispatch();
 
   const {ingredients, ingredientsRequest, ingredientsFailed} = useSelector(getStoreIngredients);
@@ -31,8 +30,7 @@ const App = () => {
   );
 
   return (
-    <div className={styles.app}>
-      <AppHeader />
+    <>
       {
         ingredientsRequest && (
           <div className={styles.loading}>
@@ -71,8 +69,8 @@ const App = () => {
             :
             null
       }
-    </div>
+    </>
   );
 }
 
-export default App;
+export default BurgerConstructorDashboard;

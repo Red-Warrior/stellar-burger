@@ -30,6 +30,6 @@ export const getIngredients = () => (dispatch) => {
       dispatch({
         type: GET_INGREDIENTS_FAILED
       })
-      console.log(e);
+      console.error(e);
     });
 }

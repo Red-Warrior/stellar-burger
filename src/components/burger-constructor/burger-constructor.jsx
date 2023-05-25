@@ -4,14 +4,11 @@ import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { getChosenIngredients } from "../../services/burger-constructor/selectors"
 import { OPEN_MODAL, SET_MODAL_TYPE } from "../../services/current-ingredient/actions";
-import {
-  SET_STUFFING_INGREDIENT,
-  SET_BUN,
-  SET_ORDER_NUMBER
-} from "../../services/burger-constructor/actions";
+import { SET_STUFFING_INGREDIENT, SET_BUN, SET_ORDER_NUMBER } from "../../services/burger-constructor/actions";
 import { INCREASE_INGREDIENTS_COUNT } from "../../services/ingredients/actions";
 import { GET_ORDER_INGREDIENTS_FAILED } from "../../services/order/actions";
-
+import { getUserData } from "../../services/user/selectors";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ConstructorElement,
   CurrencyIcon,
@@ -23,14 +20,16 @@ import { postOrder } from "../../utils/api";
 import styles from "./burger-constructor.module.css";
 
 const BurgerConstructor = memo(() => {
-  const dispatch = useDispatch();
-
-  const stuffingContainer = useRef(null);
-
   const [isScroll, setIsScroll] = useState(false);
-
+  const {userName} = useSelector(getUserData);
   const ingredients = useSelector(getChosenIngredients);
   const {bun, stuffing} = ingredients;
+
+  const stuffingContainer = useRef(null);
+  const dispatch = useDispatch();
+  const location = useLocation();
+
+  const navigate = useNavigate();
 
   const isPrice = () => !!bun || !!stuffing.length;
 
@@ -65,6 +64,10 @@ const BurgerConstructor = memo(() => {
   const makeOrder = (e) => {
     e.preventDefault();
 
+    if (!userName) {
+      return navigate("/login", {state: {from: location}});
+    }
+
     if (isPrice()) {
       postOrder(`${process.env.REACT_APP_BURGER_API_URL}/orders`, {
         method: "POST",
@@ -78,7 +81,7 @@ const BurgerConstructor = memo(() => {
         })
         .catch(e => {
           dispatch({type: GET_ORDER_INGREDIENTS_FAILED});
-          console.log(e);
+          console.error(e);
         });
     } else {
       alert("Соберите бургер прежде чем оформлять заказ!");
@@ -166,7 +169,7 @@ const BurgerConstructor = memo(() => {
             />
         }
       </div>
-      <div className={`${styles.cost} mr-4`}>
+      <div className={`${styles.cost} mr-6`}>
         <span className="text text_type_digits-medium mr-2">{totalPrice}</span>
         <CurrencyIcon type="primary" />
         <Button

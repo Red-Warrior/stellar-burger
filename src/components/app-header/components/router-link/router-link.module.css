@@ -1,0 +1,44 @@
+.linkHeader {
+  height: 56px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+
+  border: none;
+  cursor: pointer;
+  border-radius: var(--common-border-radius);
+  transition: var(--common-transition);
+
+  color: var(--text-inactive-color);
+  background: transparent;
+
+  font-family: 'Jet Brains Mono', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: normal;
+}
+
+.linkHeader:link {
+  color: var(--text-inactive-color);
+}
+
+.linkHeader:hover {
+  color: var(--text-primary-color);
+  opacity: 0.9;
+}
+
+.linkHeader svg {
+  transition: var(--common-transition);
+}
+
+.linkHeader:hover svg {
+  transition: var(--common-transition);
+  fill: var(--text-primary-color);
+  opacity: 0.9;
+}
+
+.active {
+  color: var(--text-primary-color);
+}
