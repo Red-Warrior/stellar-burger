@@ -13,6 +13,8 @@ export type TIngredient = {
   "__v": number;
 };
 
+export type TIngredientWithCount = TIngredient & { count: number };
+
 export type TAddedIngredient = TIngredient & {
   sortId: string;
   index: number;

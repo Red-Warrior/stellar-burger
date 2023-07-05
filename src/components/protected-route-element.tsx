@@ -1,9 +1,9 @@
 import React, { useEffect, FC, ReactElement } from 'react';
-import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
-import { getUserData } from "../services/user/selectors";
-import { getUserRequest } from "../services/user/actions";
+import { getUserData } from "../store/user/selectors";
+import { getUserRequest } from "../store/user/actions";
 import { getCookie } from "../utils/cookie";
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 type TProtectedRouteElementProps = {
   element: ReactElement;
@@ -11,15 +11,14 @@ type TProtectedRouteElementProps = {
 
 const ProtectedRouteElement: FC<TProtectedRouteElementProps> = ({ element }) => {
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const { userName, userRequest, userRequestStatus } = useSelector(getUserData);
+  const { userName, userRequest, userRequestStatus } = useAppSelector(getUserData);
 
   useEffect(() => {
     if (!getCookie('token')) return;
 
     if (!userName && !userRequest) {
-      // @ts-ignore
       dispatch(getUserRequest());
     }
   }, [dispatch, userName, userRequest]);

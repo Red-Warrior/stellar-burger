@@ -1,35 +1,35 @@
-import React, { useMemo, useState, useEffect, useRef, FC, ReactElement } from "react";
+import React, { FC, ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import { useDrop } from 'react-dnd';
-import { useDispatch, useSelector } from 'react-redux';
-import { getChosenIngredients } from "../../services/burger-constructor/selectors"
-import { OPEN_MODAL, SET_MODAL_TYPE } from "../../services/current-ingredient/actions";
-import { SET_STUFFING_INGREDIENT, SET_BUN, SET_ORDER_NUMBER } from "../../services/burger-constructor/actions";
-import { INCREASE_INGREDIENTS_COUNT } from "../../services/ingredients/actions";
-import { GET_ORDER_INGREDIENTS_FAILED } from "../../services/order/actions";
-import { getUserData } from "../../services/user/selectors";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  ConstructorElement,
-  CurrencyIcon,
-  Button
-} from "@ya.praktikum/react-developer-burger-ui-components";
+import { Button, ConstructorElement, CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import DefaultConstructorElement from "./components/default-constructor-element/default-constructor-element";
 import ConstructorIngredient from "./components/constructor-ingredient/constructor-ingredient";
-import { postOrder } from "../../utils/api";
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getChosenIngredients } from "../../store/burger-constructor/selectors"
+import { SET_BUN, SET_STUFFING_INGREDIENT } from "../../store/burger-constructor/actions";
+import { INCREASE_INGREDIENTS_COUNT } from "../../store/ingredients/actions";
+import { CLOSE_MODAL, postNewOrder } from "../../store/order/actions";
+import { getUserData } from "../../store/user/selectors";
+import { TAddedIngredient, TIngredient } from '../../types/ingredient';
+import { getStoreOrder, isModal } from '../../store/order/selectors';
 import styles from "./burger-constructor.module.css";
-import { TIngredient, TAddedIngredient } from '../../types/ingredient.js';
 
 const BurgerConstructor: FC = () => {
-  const [isScroll, setIsScroll] = useState<boolean>(false);
-  const { userName } = useSelector(getUserData);
-  const ingredients = useSelector(getChosenIngredients);
-  const { bun, stuffing } = ingredients;
-
-  const stuffingContainer = useRef<HTMLDivElement | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const stuffingContainer = useRef<HTMLDivElement | null>(null);
+
+  const [isScroll, setIsScroll] = useState<boolean>(false);
+  const { userName } = useAppSelector(getUserData);
+
+  const orderNumber = useAppSelector(getStoreOrder);
+  const modalStatus = useAppSelector(isModal);
+
+  const ingredients = useAppSelector(getChosenIngredients);
+  const { bun, stuffing } = ingredients;
 
   const isPrice = (): boolean => !!bun || !!stuffing.length;
 
@@ -67,18 +67,8 @@ const BurgerConstructor: FC = () => {
     if (!userName) {
       return navigate("/login", { state: { from: location } });
     }
-
     if (isPrice()) {
-      postOrder({ ingredients: chosenIngredientsId() })
-        .then(res => {
-          dispatch({ type: SET_MODAL_TYPE, payload: "orderDetails" })
-          dispatch({ type: SET_ORDER_NUMBER, payload: res.order.number });
-          dispatch({ type: OPEN_MODAL });
-        })
-        .catch(e => {
-          dispatch({ type: GET_ORDER_INGREDIENTS_FAILED });
-          console.error(e);
-        });
+      dispatch(postNewOrder({ ingredients: chosenIngredientsId() }));
     } else {
       alert("Соберите бургер прежде чем оформлять заказ!");
     }
@@ -88,7 +78,7 @@ const BurgerConstructor: FC = () => {
     accept: "bun",
     drop(item: TIngredient) {
       dispatch({ type: SET_BUN, payload: item })
-      dispatch({ type: INCREASE_INGREDIENTS_COUNT, payload: item.name })
+      dispatch({ type: INCREASE_INGREDIENTS_COUNT, payload: item._id })
     },
     collect: monitor => ({
       isOverCurrent: monitor.isOver({ shallow: true }),
@@ -99,8 +89,14 @@ const BurgerConstructor: FC = () => {
     accept: "stuffing",
     drop(item: TIngredient | TAddedIngredient) {
       if (!("sortId" in item)) {
-        dispatch({ type: SET_STUFFING_INGREDIENT, payload: { ...item, sortId: nanoid(10) } });
-        dispatch({ type: INCREASE_INGREDIENTS_COUNT, payload: item.name });
+        dispatch({
+          type: SET_STUFFING_INGREDIENT,
+          payload: { ...item, sortId: nanoid(10) } as TAddedIngredient
+        });
+        dispatch({
+          type: INCREASE_INGREDIENTS_COUNT,
+          payload: item._id
+        });
       }
     },
     collect: monitor => ({
@@ -109,6 +105,13 @@ const BurgerConstructor: FC = () => {
   });
 
   const bunStyle = `${styles.bun} ml-8`;
+
+  useEffect(() => {
+    if (modalStatus) {
+      dispatch({ type: CLOSE_MODAL });
+      navigate(`order/${orderNumber}`, { state: { background: location } });
+    }
+  }, [modalStatus, orderNumber, dispatch, navigate, location]);
 
   return (
     <div className={`${styles.constructor} pt-25`}>

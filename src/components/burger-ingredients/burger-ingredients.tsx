@@ -1,32 +1,26 @@
 import React, { FC } from "react";
-import { useSelector } from 'react-redux';
-import { getStoreIngredients } from "../../services/ingredients/selectors"
+import { getStoreIngredients } from "../../store/ingredients/selectors"
 import IngredientsMenu from "../ingredients-menu/ingredients-menu";
 import Category from "../category/category";
+import { useAppSelector } from '../../store/hooks';
+import { titlesOfIngredientCategories } from '../../utils/titlesOfIngredientCategories';
+import { TIngredientTitles } from '../../types/titles-of-ingredient-categories';
+import { TIngredient } from '../../types/ingredient';
 import styles from "./burger-ingredients.module.css";
-import { TTitlesOfIngredientCategories, TIngredientTitles } from '../../types/titles-of-ingredient-categories.js';
-import { TIngredient } from '../../types/ingredient.js';
 
 type TIngredientSets = {
   [key in TIngredientTitles]: TIngredient[];
 };
 
-export const titlesOfIngredientCategories: TTitlesOfIngredientCategories = {
-  bun: 'Булки',
-  sauce: 'Соусы',
-  main: 'Начинки',
-};
-
 const BurgerIngredients: FC = () => {
-  const { ingredients } = useSelector(getStoreIngredients);
+  const { ingredients } = useAppSelector(getStoreIngredients);
 
   const ingredientsSets = ingredients.reduce((acc: TIngredientSets, item: TIngredient) => {
-    if (!acc[item.type as keyof typeof titlesOfIngredientCategories]) {
-      acc[item.type as keyof typeof titlesOfIngredientCategories] = [];
-    }
     acc[item.type as keyof typeof titlesOfIngredientCategories].push(item);
+
+
     return acc;
-  }, {});
+  }, { bun: [], sauce: [], main: [] });
 
   return (
     <div className={`${styles.Ingredients} pt-10`}>
@@ -39,7 +33,7 @@ const BurgerIngredients: FC = () => {
                 extraClass={type}
                 key={type}
                 title={titlesOfIngredientCategories[type as keyof typeof titlesOfIngredientCategories]}
-                ingredients={ingredientsSets[type]}
+                ingredients={ingredientsSets[type as keyof typeof titlesOfIngredientCategories]}
               />
             )
           )
