@@ -24,26 +24,26 @@ const ProfilePage: FC = () => {
     dispatch(logoutUserRequest());
   };
 
-  const linkTextStyle = "text text_type_main-medium text_color_inactive"
+  const linkTextStyle = "text text_type_main-medium"
 
   return (
     <main className={styles.profile}>
       <nav className={`${styles.navBar} mt-30`}>
         <NavLink
           to="/profile"
-          className={`${styles.navItem} ${linkTextStyle} ${isActivePath ? "activeTextColor" : ""}`}
+          className={`${styles.navItem} ${linkTextStyle} ${isActivePath ? "activeTextColor" : "text_color_inactive"}`}
         >
           Профиль
         </NavLink>
         <NavLink
           to="/profile/orders"
-          className={`${styles.navItem} ${linkTextStyle} ${!isActivePath ? "activeTextColor" : ""}`}
+          className={`${styles.navItem} ${linkTextStyle} ${!isActivePath ? "activeTextColor" : "text_color_inactive"}`}
         >
           История заказов
         </NavLink>
         <NavLink
           to="/"
-          className={`${styles.navItem} ${linkTextStyle}`}
+          className={`${styles.navItem} ${linkTextStyle} text_color_inactive`}
           onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => logout(e)}
         >
           Выход

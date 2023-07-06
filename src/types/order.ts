@@ -13,6 +13,7 @@ export type TOrderDataResponse = {
   orders: TOrder[];
   total: number;
   totalToday: number;
+  message?: string;
 };
 
 export type TOrderData = Omit<TOrderDataResponse, "success">;

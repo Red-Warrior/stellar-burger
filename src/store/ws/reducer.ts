@@ -8,7 +8,6 @@ import type { TWSActions } from './types';
 import { TOrderData } from '../../types/order';
 
 type TWSState = {
-  wsConnected: boolean;
   orders: TOrderData;
 
   error?: Event;
@@ -22,7 +21,6 @@ const defaultOrders = {
 }
 
 const initialState: TWSState = {
-  wsConnected: false,
   orders: defaultOrders
 };
 
@@ -31,20 +29,17 @@ export const ws = (state = initialState, action: TWSActions) => {
     case WS_CONNECTION_SUCCESS:
       return {
         ...state,
-        wsConnected: true,
         error: undefined
       };
 
     case WS_CONNECTION_ERROR:
       return {
         ...state,
-        wsConnected: false,
         error: action.payload
       };
 
     case WS_CONNECTION_CLOSED:
       return {
-        wsConnected: false,
         orders: defaultOrders,
         error: undefined,
       };

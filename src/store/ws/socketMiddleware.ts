@@ -3,6 +3,8 @@ import type { TWSStoreActions } from './types';
 import { TOrderDataResponse } from '../../types/order';
 import { AppDispatch, RootState } from '../types';
 import { TWSActions } from './types';
+import { renewToken } from '../../services/auth';
+import { getCookie } from '../../utils/cookie';
 
 export const socketMiddleware = (wsActions: TWSStoreActions): Middleware => {
   return ((store: MiddlewareAPI<AppDispatch, RootState>) => {
@@ -24,10 +26,18 @@ export const socketMiddleware = (wsActions: TWSStoreActions): Middleware => {
         };
 
         socket.onmessage = event => {
+
           const { data } = event;
           const parsedData: TOrderDataResponse = JSON.parse(data);
-          const { success, ...restParsedData } = parsedData;
 
+          if (parsedData.message === "Invalid or missing token") {
+            renewToken({ token: getCookie('refreshToken') as string })
+              .then(() => {
+                socket = new WebSocket(`${process.env.REACT_APP_BURGER_WS}?token=${getCookie("token")}`);
+                dispatch({ type: onOpen, payload: event });
+              })
+          }
+          const { success, ...restParsedData } = parsedData;
           dispatch({ type: onMessage, payload: restParsedData });
         };
 

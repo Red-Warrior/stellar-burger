@@ -109,7 +109,7 @@ const BurgerConstructor: FC = () => {
   useEffect(() => {
     if (modalStatus) {
       dispatch({ type: CLOSE_MODAL });
-      navigate(`order/${orderNumber}`, { state: { background: location } });
+      navigate(`order/${orderNumber}`, { state: { background: location }, replace: true });
     }
   }, [modalStatus, orderNumber, dispatch, navigate, location]);
 

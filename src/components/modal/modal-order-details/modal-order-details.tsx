@@ -23,7 +23,7 @@ const ModalOrderDetails: FC<PropsWithChildren> = ({ children }) => {
     dispatch({ type: RESET_INGREDIENTS_COUNTER });
     dispatch({ type: REMOVE_ORDER });
 
-    navigate(-1);
+    navigate("/");
   }, [navigate, dispatch]);
 
   const keyHandler = useCallback<TKeyHandlerCallback>((e) => {

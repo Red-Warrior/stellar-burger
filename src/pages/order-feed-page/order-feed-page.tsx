@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, FC } from 'react';
 import FeedsLine from '../../components/order-description/components/feeds-line/feeds-line';
 import OrderInfo from '../../components/order-description/components/order-info/order-info';
-import { getOrders, getWsData } from '../../store/ws/selectors';
+import { getOrders } from '../../store/ws/selectors';
 import { WS_CONNECTION_CLOSED, WS_CONNECTION_START } from '../../store/ws/actions';
 import { getDoneAndRestsSets } from '../../utils/getOrderStatusSets';
 import { TOrderStatusSets } from '../../types/order';
@@ -12,7 +12,6 @@ import stylesOfFeedsLine from "../../components/order-description/components/fee
 const OrderFeedPage: FC = () => {
   const dispatch = useAppDispatch();
 
-  const { wsConnected } = useAppSelector(getWsData);
   const { orders, total, totalToday } = useAppSelector(getOrders);
 
   const ordersStatusSets = useMemo<TOrderStatusSets>(() => {
@@ -29,7 +28,7 @@ const OrderFeedPage: FC = () => {
     };
   }, [dispatch]);
 
-  return wsConnected ? (
+  return (orders && orders.length) ? (
     <div className={styles.container}>
       <h1 className={`${styles.title} text text_type_main-large`}>Лента заказов</h1>
       <div className={styles.modules}>

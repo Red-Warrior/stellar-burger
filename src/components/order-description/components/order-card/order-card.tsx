@@ -1,9 +1,9 @@
 import React, { useMemo, memo, FC } from 'react';
-import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 import PriceDetail from '../../../ui/components/price-detail/price-detail';
 import IngredientImage from '../../../ui/components/ingredient-image/ingredient-image';
+import { useAppSelector } from '../../../../store/hooks';
 import { getStoreIngredients } from '../../../../store/ingredients/selectors';
 import { TOrder } from '../../../../types/order';
 import { TOrderStatus } from '../../../../types/order';
@@ -28,7 +28,7 @@ const OrderCard: FC<TOrder & { showStatus: boolean | undefined }> = memo((
   const location = useLocation()
   const navigate = useNavigate();
 
-  const { ingredientsDataAndCount } = useSelector(getStoreIngredients);
+  const { ingredientsDataAndCount } = useAppSelector(getStoreIngredients);
 
   const navigateToOrderDetails = () => {
     navigate(`${number}`, { state: { background: location } });

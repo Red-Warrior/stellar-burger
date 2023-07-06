@@ -7,7 +7,7 @@ import ProfilePage from "./profile-page/profile-page";
 import RegisterPage from "./register-page/register-page";
 import ResetPasswordPage from "./reset-password-page/reset-password-page";
 
-import OrderFeedPage from './order_feed-page/order_feed-page';
+import OrderFeedPage from './order-feed-page/order-feed-page';
 import LayoutPage from "../components/layout/layout";
 import ProfileForm from '../components/profile-sections/components/profile-form/profile-form';
 import ProfileHistory from '../components/profile-sections/components/profile-history/profile-history';

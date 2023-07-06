@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState, FC } from 'react';
-import { useSelector } from 'react-redux';
 import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { updateUserRequest } from '../../../../store/user/actions';
 import { getUserData } from '../../../../store/user/selectors';
-import { useAppDispatch } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { TUserData } from '../../../../types/user';
 import styles from '../../../../pages/profile-page/profile-page.module.css';
 
@@ -26,7 +25,7 @@ const ProfileForm: FC = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
-  const { userName, userEmail } = useSelector(getUserData);
+  const { userName, userEmail } = useAppSelector(getUserData);
 
   const [userData, setUserData] = useState<TUserData>({
     name: userName,
