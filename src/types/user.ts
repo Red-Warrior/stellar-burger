@@ -3,3 +3,5 @@ export type TUserData = {
   email: string;
   password: string;
 };
+
+export type TGetUpdateUserData = Omit<TUserData, "password">;

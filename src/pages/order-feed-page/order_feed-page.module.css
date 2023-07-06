@@ -1,0 +1,12 @@
+.container {
+  width: 1248px;
+}
+
+.modules {
+  display: flex;
+  gap: 0 60px
+}
+
+.title {
+  margin: 40px auto 20px 0;
+}

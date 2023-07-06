@@ -1,0 +1,25 @@
+.container {
+  width: 1240px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.loading {
+  padding-top: 250px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  margin: 20px 0 0 0;
+  width: 600px;
+}

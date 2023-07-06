@@ -1,0 +1,36 @@
+.number {
+  margin: 0 auto 0;
+}
+
+.status {
+  margin-top: 0;
+}
+
+.list {
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 316px;
+  overflow-y: scroll;
+}
+
+.card {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.card:not(:last-child) {
+  margin-bottom: 16px;
+}
+
+.text {
+  max-width: 320px;
+  margin-right: auto;
+}
+
+.info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

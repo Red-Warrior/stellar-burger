@@ -1,16 +1,16 @@
 import React, { FC } from "react";
-import { useSelector } from "react-redux";
 import icon from "../../../../images/done.png";
 import styles from "./order-details.module.css";
-import { getChosenIngredients } from "../../../../services/burger-constructor/selectors";
+
+import { useParams } from 'react-router-dom';
 
 const OrderDetails: FC = () => {
-  const { orderNumber } = useSelector(getChosenIngredients);
+  const { number } = useParams();
 
   return (
     <div className={styles.order}>
-      <h2 className="text text_type_digits-large mt-4 mb-8">
-        {orderNumber}
+      <h2 className={`${styles.number} text text_type_digits-large mt-4 mb-8`}>
+        {number}
       </h2>
       <p className="text text_type_main-medium mb-15">
         идентификатор заказа

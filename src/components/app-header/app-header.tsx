@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { useNavigate } from "react-router-dom";
-import styles from './app-header.module.css';
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import RouterLink from "./components/router-link/router-link";
+import styles from './app-header.module.css';
 
 const AppHeader: FC = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const AppHeader: FC = () => {
           </RouterLink>
 
           <RouterLink
-            to="order-feed"
+            to="feed"
             iconPrimary={<ListIcon key="1" type="primary" />}
             iconSecondary={<ListIcon key="1" type="secondary" />}
           >

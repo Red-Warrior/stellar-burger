@@ -38,7 +38,3 @@
   fill: var(--text-primary-color);
   opacity: 0.9;
 }
-
-.active {
-  color: var(--text-primary-color);
-}

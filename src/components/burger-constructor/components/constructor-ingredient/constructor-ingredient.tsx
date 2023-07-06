@@ -1,16 +1,16 @@
-import React, { useRef, FC } from 'react';
+import React, { memo, useRef, FC } from 'react';
 import { useDrag, useDrop } from "react-dnd";
+import { Identifier } from 'dnd-core';
 import { ConstructorElement, DragIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import styles from "./constructor-ingredient.module.css";
-import { useDispatch, useSelector } from "react-redux";
-import { getChosenIngredients } from "../../../../services/burger-constructor/selectors";
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { getChosenIngredients } from "../../../../store/burger-constructor/selectors";
 import {
   DELETE_STUFFING_INGREDIENT,
   REPLACE_WITH_SORTED_STUFFING
-} from "../../../../services/burger-constructor/actions";
-import { DECREASE_INGREDIENTS_COUNT } from "../../../../services/ingredients/actions";
-import { TAddedIngredient } from '../../../../types/ingredient.js';
-import { Identifier } from 'dnd-core';
+} from "../../../../store/burger-constructor/actions";
+import { DECREASE_INGREDIENTS_COUNT } from "../../../../store/ingredients/actions";
+import { TAddedIngredient } from '../../../../types/ingredient';
+import styles from "./constructor-ingredient.module.css";
 
 type TConstructorIngredientProps = {
   item: TAddedIngredient;
@@ -18,15 +18,15 @@ type TConstructorIngredientProps = {
   sortId: string;
 };
 
-const ConstructorIngredient: FC<TConstructorIngredientProps> = ({ item, index, sortId }) => {
-  const dispatch = useDispatch();
+const ConstructorIngredient: FC<TConstructorIngredientProps> = memo(({ item, index, sortId }) => {
+  const dispatch = useAppDispatch();
 
-  const stuffing = useSelector(getChosenIngredients).stuffing;
+  const stuffing = useAppSelector(getChosenIngredients).stuffing;
   const ref = useRef<HTMLDivElement | null>(null);
 
   const deleteIngredient = (item: TAddedIngredient): void => {
     dispatch({ type: DELETE_STUFFING_INGREDIENT, payload: item.sortId });
-    dispatch({ type: DECREASE_INGREDIENTS_COUNT, payload: item.name })
+    dispatch({ type: DECREASE_INGREDIENTS_COUNT, payload: item._id })
   }
 
   const [{ handlerId }, dropRef] = useDrop<TAddedIngredient, unknown, { handlerId: Identifier | null }>({
@@ -69,7 +69,8 @@ const ConstructorIngredient: FC<TConstructorIngredientProps> = ({ item, index, s
 
       if (stuffing.find((stuff: TAddedIngredient) => stuff.sortId === item.sortId)) {
         dispatch({
-          type: REPLACE_WITH_SORTED_STUFFING, payload: sortedStuffingOrder
+          type: REPLACE_WITH_SORTED_STUFFING,
+          payload: sortedStuffingOrder
         })
       }
       item.index = hoverIndex
@@ -104,6 +105,6 @@ const ConstructorIngredient: FC<TConstructorIngredientProps> = ({ item, index, s
       />
     </div>
   );
-};
+});
 
 export default ConstructorIngredient;

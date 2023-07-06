@@ -1,19 +1,16 @@
-import React, { useMemo, useEffect, FC } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useMemo, FC } from "react";
 import { useParams } from "react-router-dom";
+import { useAppSelector } from '../../../../store/hooks';
+import { getStoreIngredients } from "../../../../store/ingredients/selectors";
+import { TIngredient } from '../../../../types/ingredient';
 import styles from "./ingredient-details.module.css";
-import { getIngredients } from "../../../../services/ingredients/actions";
-import { getStoreIngredients } from "../../../../services/ingredients/selectors";
-import { TIngredient } from '../../../../types/ingredient.js';
 
 type TProperty = {
   [key: string]: number;
 };
 
 const IngredientDetails: FC = () => {
-  const dispatch = useDispatch();
-
-  const { ingredients } = useSelector(getStoreIngredients);
+  const { ingredients } = useAppSelector(getStoreIngredients);
   const { id } = useParams();
 
   const currentIngredient = useMemo(() => {
@@ -35,17 +32,7 @@ const IngredientDetails: FC = () => {
     return undefined;
   }, [currentIngredient]);
 
-  useEffect(
-    () => {
-      if (!ingredients.length) {
-        // @ts-ignore
-        dispatch(getIngredients());
-      }
-    },
-    [dispatch, ingredients]
-  );
-
-  return (currentIngredient && property) && (
+  return (currentIngredient && property) ? (
     <div className={styles.container}>
       <img src={currentIngredient.image_large} alt={`Изображение: ${currentIngredient.name}`} />
       <p className="text text_type_main-medium mt-4">
@@ -62,7 +49,7 @@ const IngredientDetails: FC = () => {
           )
         }
       </ul>
-    </div>)
+    </div>) : null
 };
 
 export default IngredientDetails;

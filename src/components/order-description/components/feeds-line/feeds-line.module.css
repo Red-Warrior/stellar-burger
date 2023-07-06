@@ -1,0 +1,27 @@
+.Ingredients {
+  box-sizing: border-box;
+  width: 600px;
+  height: 852px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  height: 900px;
+  overflow-y: scroll;
+}
+
+.containerFeedsLine {
+  composes: container;
+  width: 595px;
+  height: 852px;
+  gap: 16px 0;
+}
+
+.containerHistory {
+  composes: container;
+  width: 844px;
+  height: 916px;
+  gap: 24px 0;
+}

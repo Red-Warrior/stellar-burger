@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { memo, FC } from 'react';
 import styles from "./default-constructor-element.module.css";
 
 type TDefaultConstructorElementProps = {
@@ -8,7 +8,7 @@ type TDefaultConstructorElementProps = {
   isHover?: boolean;
 };
 
-const DefaultConstructorElement: FC<TDefaultConstructorElementProps> = (
+const DefaultConstructorElement: FC<TDefaultConstructorElementProps> = memo((
   {
     type,
     text,
@@ -22,6 +22,6 @@ const DefaultConstructorElement: FC<TDefaultConstructorElementProps> = (
       <span>{text}</span>
     </div>
   );
-};
+});
 
 export default DefaultConstructorElement;
