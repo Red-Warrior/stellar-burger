@@ -1,25 +1,23 @@
 import React, { FC, memo } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { getStoreIngredients } from "../../services/ingredients/selectors";
-import { getChosenIngredients } from "../../services/burger-constructor/selectors";
-import { SET_SELECTED_INGREDIENT } from "../../services/current-ingredient/actions";
-import { useDrag } from 'react-dnd';
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDrag } from 'react-dnd';
 import { CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
+import { useAppSelector } from '../../store/hooks';
+import { getIngredientsDataAndCount } from "../../store/ingredients/selectors";
+import { getChosenIngredients } from "../../store/burger-constructor/selectors";
+import { TIngredient } from '../../types/ingredient';
 import styles from "./card.module.css";
-import { TIngredient } from '../../types/ingredient.js';
 
 type TCardProps = {
   ingredient: TIngredient;
 };
 
 const Card: FC<TCardProps> = memo(({ ingredient }) => {
-  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const ingredientCount = useSelector(getStoreIngredients).ingredientsCounter[ingredient.name];
-  const hasBun = useSelector(getChosenIngredients).bun?.name;
+  const ingredientCount = useAppSelector(getIngredientsDataAndCount)![ingredient._id].count;
+  const hasBun = useAppSelector(getChosenIngredients).bun?.name;
 
   const [{ opacity }, dragRef] = useDrag({
     type: ingredient.type === "bun" ? "bun" : "stuffing",
@@ -32,7 +30,6 @@ const Card: FC<TCardProps> = memo(({ ingredient }) => {
   const handleOpenModal = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
     e.preventDefault();
 
-    dispatch({ type: SET_SELECTED_INGREDIENT, payload: ingredient });
     navigate(`ingredients/${ingredient._id}`, { state: { background: location } });
   };
 

@@ -29,3 +29,11 @@ code {
 .stellarTextContainer {
   margin-top: 0;
 }
+
+.statusHighlighting {
+  color: var(--colors-interface-success);
+}
+
+.activeTextColor {
+  color: var(--text-primary-color);
+}

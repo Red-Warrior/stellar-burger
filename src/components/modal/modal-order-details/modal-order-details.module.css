@@ -1,0 +1,37 @@
+.modal {
+  z-index: 200;
+  width: 720px;
+  height: 718px;
+
+  box-sizing: border-box;
+  background: var(--background);
+  border: 1px solid rgba(76, 76, 255, 0.2);
+  box-shadow:
+    0px 24px 32px rgba(0, 0, 0, 0.04),
+    0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04),
+    0px 0px 1px rgba(0, 0, 0, 0.04);
+
+  border-radius: 40px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  width: 640px;
+  height: 64px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.closeIcon {
+  cursor: pointer;
+}

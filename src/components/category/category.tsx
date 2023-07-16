@@ -1,7 +1,7 @@
-import React, { FC, memo, ReactElement } from "react";
+import React, { memo, ReactElement, FC } from "react";
 import Card from "../card/card";
+import { TIngredient } from '../../types/ingredient';
 import styles from "./category.module.css";
-import { TIngredient } from '../../types/ingredient.js';
 
 type TCategoryProps = {
   title: string;
