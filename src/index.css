@@ -37,3 +37,11 @@ code {
 .activeTextColor {
   color: var(--text-primary-color);
 }
+
+#root .title {
+  justify-content: center;
+}
+
+#root .closeIcon {
+  visibility: hidden;
+}

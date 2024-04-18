@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import BurgerIngredients from "../../components/burger-ingredients/burger-ingredients";
@@ -16,6 +16,9 @@ const BurgerConstructorDashboard: FC = () => {
 
   const loading = "Загрузка...";
   const order = <p className={styles.info}><span>Ваш заказ обрабатывается</span><span>Подождите немного...</span></p>;
+
+  useEffect(() => {
+  }, []);
 
   return (
     <>

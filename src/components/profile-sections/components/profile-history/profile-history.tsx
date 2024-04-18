@@ -17,7 +17,7 @@ const ProfileHistory: FC = () => {
       payload: `${process.env.REACT_APP_BURGER_WS}?token=${getCookie("token")}`
     });
     return () => {
-      dispatch({ type: WS_CONNECTION_CLOSED });
+      // dispatch({ type: WS_CONNECTION_CLOSED });
     };
   }, [dispatch]);
 

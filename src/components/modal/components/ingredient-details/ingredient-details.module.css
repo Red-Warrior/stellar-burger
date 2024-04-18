@@ -21,3 +21,15 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.title {
+  width: 640px;
+  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.closeIcon {
+  cursor: pointer;
+}

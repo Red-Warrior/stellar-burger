@@ -13,7 +13,7 @@ const ProtectedRouteElement: FC<TProtectedRouteElementProps> = ({ element }) => 
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  const { userName, userRequest, userRequestStatus } = useAppSelector(getUserData);
+  const { userName, userRequest } = useAppSelector(getUserData);
 
   useEffect(() => {
     if (!getCookie('token')) return;
@@ -27,7 +27,7 @@ const ProtectedRouteElement: FC<TProtectedRouteElementProps> = ({ element }) => 
     return element;
   }
 
-  if (!userName && !userRequest && !userRequestStatus) {
+  if (!userName && !userRequest) {
     console.log(`Для доступа к ${location.pathname} необходимо авторизоваться!`);
     return <Navigate to="/login" replace state={{ from: location }} />;
   }

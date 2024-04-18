@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, memo, FC } from 'react';
-import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
+import { CloseIcon, FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 import IngredientImage from '../../../ui/components/ingredient-image/ingredient-image';
 import PriceDetail from '../../../ui/components/price-detail/price-detail';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -17,9 +17,10 @@ type TOrderIdField = {
 
 type TGeneratedOrderProps = {
   showNumber?: boolean
+  handleCloseModal: () => void;
 }
 
-const GeneratedOrder: FC<TGeneratedOrderProps> = memo(({ showNumber }) => {
+const GeneratedOrder: FC<TGeneratedOrderProps> = memo(({ showNumber, handleCloseModal }) => {
   const dispatch = useAppDispatch();
 
   const { number } = useParams();
@@ -59,6 +60,15 @@ const GeneratedOrder: FC<TGeneratedOrderProps> = memo(({ showNumber }) => {
 
   return name ? (
     <>
+      <div className={`${styles.title} title`}>
+        <p className="text text_type_digits-default">
+          {"#" + number}
+        </p>
+        <div className={`${styles.closeIcon} closeIcon`}>
+          <CloseIcon onClick={handleCloseModal} type="primary" />
+        </div>
+      </div>
+
       {showNumber && <p className={`${styles.number} text text_type_digits-default`}>
         #{number}
       </p>}
