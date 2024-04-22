@@ -36,11 +36,8 @@ describe('ingredients reducer', () => {
         type: types.GET_INGREDIENTS_REQUEST,
       })
     ).toEqual({
-      ingredients: [],
-      ingredientsDataAndCount: null,
-
+      ...initialState,
       ingredientsRequest: true,
-      ingredientsFailed: false,
     })
   })
 
@@ -51,11 +48,8 @@ describe('ingredients reducer', () => {
         payload: data
       })
     ).toEqual({
+      ...initialState,
       ingredients: data,
-      ingredientsDataAndCount: null,
-
-      ingredientsRequest: false,
-      ingredientsFailed: false,
     })
   })
 
@@ -65,10 +59,7 @@ describe('ingredients reducer', () => {
         type: types.GET_INGREDIENTS_FAILED,
       })
     ).toEqual({
-      ingredients: [],
-      ingredientsDataAndCount: null,
-
-      ingredientsRequest: false,
+      ...initialState,
       ingredientsFailed: true,
     })
   })
@@ -80,11 +71,8 @@ describe('ingredients reducer', () => {
         payload: data
       })
     ).toEqual({
-      ingredients: [],
+      ...initialState,
       ingredientsDataAndCount: dataFillCounter,
-
-      ingredientsRequest: false,
-      ingredientsFailed: false,
     })
   })
 
@@ -97,11 +85,8 @@ describe('ingredients reducer', () => {
         type: types.RESET_INGREDIENTS_COUNTER,
       })
     ).toEqual({
-      ingredients: [],
+      ...initialState,
       ingredientsDataAndCount: dataCounterResetToZero,
-
-      ingredientsRequest: false,
-      ingredientsFailed: false,
     })
   })
 
@@ -115,11 +100,8 @@ describe('ingredients reducer', () => {
         payload: testId
       })
     ).toEqual({
-      ingredients: [],
+      ...initialState,
       ingredientsDataAndCount: counterIncreased,
-
-      ingredientsRequest: false,
-      ingredientsFailed: false,
     })
   })
 
@@ -133,11 +115,8 @@ describe('ingredients reducer', () => {
         payload: testId
       })
     ).toEqual({
-      ingredients: [],
+      ...initialState,
       ingredientsDataAndCount: counterDecreased,
-
-      ingredientsRequest: false,
-      ingredientsFailed: false,
     })
   })
 })

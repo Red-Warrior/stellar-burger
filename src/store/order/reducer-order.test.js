@@ -1,4 +1,4 @@
-import { order, initialState, defaultOrder, defaultSelectedOrder } from "./reducer";
+import { order, initialState, defaultOrder } from "./reducer";
 import * as types from "./actions";
 
 describe('order reducer', () => {
@@ -32,13 +32,8 @@ describe('order reducer', () => {
         type: types.POST_ORDER_REQUEST,
       })
     ).toEqual({
-      order: defaultOrder,
+      ...initialState,
       orderRequest: true,
-      orderFailed: false,
-      selectedOrder: defaultSelectedOrder,
-      selectedOrderRequest: false,
-      selectedOrderFailed: false,
-      modalIsOpen: false
     })
   })
 
@@ -49,13 +44,8 @@ describe('order reducer', () => {
         payload: testOrder
       })
     ).toEqual({
+      ...initialState,
       order: testOrder,
-      orderRequest: false,
-      orderFailed: false,
-      selectedOrder: defaultSelectedOrder,
-      selectedOrderRequest: false,
-      selectedOrderFailed: false,
-      modalIsOpen: false
     })
   })
 
@@ -66,13 +56,8 @@ describe('order reducer', () => {
         type: types.POST_ORDER_FAILED,
       })
     ).toEqual({
-      order: defaultOrder,
-      orderRequest: false,
+      ...initialState,
       orderFailed: true,
-      selectedOrder: defaultSelectedOrder,
-      selectedOrderRequest: false,
-      selectedOrderFailed: false,
-      modalIsOpen: false
     })
   })
   it('remove order', () => {
@@ -81,13 +66,8 @@ describe('order reducer', () => {
         type: types.REMOVE_ORDER,
       })
     ).toEqual({
+      ...initialState,
       order: defaultOrder,
-      orderRequest: false,
-      orderFailed: false,
-      selectedOrder: defaultSelectedOrder,
-      selectedOrderRequest: false,
-      selectedOrderFailed: false,
-      modalIsOpen: false
     })
   })
   it('get selected order request', () => {
@@ -96,13 +76,8 @@ describe('order reducer', () => {
         type: types.GET_SELECTED_ORDER_REQUEST,
       })
     ).toEqual({
-      order: defaultOrder,
-      orderRequest: false,
-      orderFailed: false,
-      selectedOrder: defaultSelectedOrder,
+      ...initialState,
       selectedOrderRequest: true,
-      selectedOrderFailed: false,
-      modalIsOpen: false
     })
   })
   it('get selected order success', () => {
@@ -112,13 +87,8 @@ describe('order reducer', () => {
         payload: orders
       })
     ).toEqual({
-      order: defaultOrder,
-      orderRequest: false,
-      orderFailed: false,
+      ...initialState,
       selectedOrder: orders[0],
-      selectedOrderRequest: false,
-      selectedOrderFailed: false,
-      modalIsOpen: false
     })
   })
   it('get selected order failed', () => {
@@ -127,13 +97,8 @@ describe('order reducer', () => {
         type: types.GET_SELECTED_ORDER_FAILED,
       })
     ).toEqual({
-      order: defaultOrder,
-      orderRequest: false,
-      orderFailed: false,
-      selectedOrder: defaultSelectedOrder,
-      selectedOrderRequest: false,
+      ...initialState,
       selectedOrderFailed: true,
-      modalIsOpen: false
     })
   })
   it('open modal', () => {
@@ -142,12 +107,7 @@ describe('order reducer', () => {
         type: types.OPEN_MODAL,
       })
     ).toEqual({
-      order: defaultOrder,
-      orderRequest: false,
-      orderFailed: false,
-      selectedOrder: defaultSelectedOrder,
-      selectedOrderRequest: false,
-      selectedOrderFailed: false,
+      ...initialState,
       modalIsOpen: true
     })
   })
@@ -157,12 +117,7 @@ describe('order reducer', () => {
         type: types.CLOSE_MODAL,
       })
     ).toEqual({
-      order: defaultOrder,
-      orderRequest: false,
-      orderFailed: false,
-      selectedOrder: defaultSelectedOrder,
-      selectedOrderRequest: false,
-      selectedOrderFailed: false,
+      ...initialState,
       modalIsOpen: false
     })
   })
