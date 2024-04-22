@@ -13,14 +13,14 @@ type TWSState = {
   error?: Event;
 }
 
-const defaultOrders = {
+export const defaultOrders = {
   success: false,
   orders: [],
   total: 0,
   totalToday: 0
 }
 
-const initialState: TWSState = {
+export const initialState: TWSState = {
   orders: defaultOrders
 };
 

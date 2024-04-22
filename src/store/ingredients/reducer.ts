@@ -25,7 +25,7 @@ type TIngredientsStore = {
   ingredientsFailed: boolean;
 };
 
-const initialState: TIngredientsStore = {
+export const initialState: TIngredientsStore = {
   ingredients: [],
   ingredientsDataAndCount: null,
 
@@ -77,7 +77,9 @@ export const ingredients = (state = initialState, action: TIngredientsActions): 
       };
 
     case INCREASE_INGREDIENTS_COUNT:
-      const ingredientIncreased = state.ingredientsDataAndCount![action.payload]
+      if (!state.ingredientsDataAndCount) return state;
+
+      const ingredientIncreased = state.ingredientsDataAndCount[action.payload]
       return {
         ...state,
         ingredientsDataAndCount: {
@@ -87,7 +89,9 @@ export const ingredients = (state = initialState, action: TIngredientsActions): 
       };
 
     case DECREASE_INGREDIENTS_COUNT:
-      const ingredientDecreased = state.ingredientsDataAndCount![action.payload]
+      if (!state.ingredientsDataAndCount) return state;
+
+      const ingredientDecreased = state.ingredientsDataAndCount[action.payload]
       if (ingredientDecreased.count === 0) return state;
 
       return {

@@ -31,19 +31,19 @@ type TOrderState = {
   modalIsOpen: boolean;
 };
 
-const defaultSelectedOrder: TDefaultOrder = {
+export const defaultSelectedOrder: TDefaultOrder = {
   createdAt: "",
   name: "",
   ingredients: [],
   status: ""
 };
 
-const defaultOrder = {
+export const defaultOrder = {
   name: "",
   number: -1,
 }
 
-const initialState: TOrderState = {
+export const initialState: TOrderState = {
   order: defaultOrder,
   orderRequest: false,
   orderFailed: false,
@@ -60,7 +60,8 @@ export const order = (state = initialState, action: TOrderActions): TOrderState 
     case POST_ORDER_REQUEST:
       return {
         ...state,
-        orderRequest: true
+        orderRequest: true,
+        orderFailed: false,
       };
 
     case POST_ORDER_SUCCESS:

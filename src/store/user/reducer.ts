@@ -42,7 +42,7 @@ type TUserStore = {
   userResetPasswordFailed: boolean;
 };
 
-const initialState: TUserStore = {
+export const initialState: TUserStore = {
   userName: "",
   userEmail: "",
 

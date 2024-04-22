@@ -49,7 +49,7 @@ const IngredientDetails: FC<TIngredientDetails> = ({ handleCloseModal }) => {
       </div>
       <div className={styles.container}>
         <img src={currentIngredient.image_large} alt={`Изображение: ${currentIngredient.name}`} />
-        <p className="text text_type_main-medium mt-4">
+        <p data-madal="modal" className="text text_type_main-medium mt-4">
           {currentIngredient.name}
         </p>
         <ul className={`${styles.set} mt-8`}>

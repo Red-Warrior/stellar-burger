@@ -18,15 +18,14 @@ const BurgerIngredients: FC = () => {
   const ingredientsSets = ingredients.reduce((acc: TIngredientSets, item: TIngredient) => {
     acc[item.type as keyof typeof titlesOfIngredientCategories].push(item);
 
-
     return acc;
   }, { bun: [], sauce: [], main: [] });
 
   return (
     <div className={`${styles.Ingredients} pt-10`}>
-      <h1 className="text text_type_main-large pb-5">Соберите бургер</h1>
+      <h1 data-ingredients-list="ingredients-list" className="text text_type_main-large pb-5">Соберите бургер</h1>
       <IngredientsMenu titles={titlesOfIngredientCategories} />
-      <div className={`${styles.container} custom-scroll`}>
+      <div data-category="first-category" className={`${styles.container} custom-scroll`}>
         {
           ["bun", "main", "sauce"].map((type) => (
               <Category

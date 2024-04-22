@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import BurgerIngredients from "../../components/burger-ingredients/burger-ingredients";
@@ -10,15 +10,11 @@ import { getMakeOrderRequestStatus } from '../../store/order/selectors';
 import styles from "./constructor-page.module.css"
 
 const BurgerConstructorDashboard: FC = () => {
-
   const { ingredients, ingredientsRequest, ingredientsFailed } = useAppSelector(getStoreIngredients);
   const makeOrderRequestIsTrue = useAppSelector(getMakeOrderRequestStatus);
 
   const loading = "Загрузка...";
   const order = <p className={styles.info}><span>Ваш заказ обрабатывается</span><span>Подождите немного...</span></p>;
-
-  useEffect(() => {
-  }, []);
 
   return (
     <>
@@ -32,7 +28,6 @@ const BurgerConstructorDashboard: FC = () => {
           </div>) : null
       }
       {ingredientsFailed && 'Произошла ошибка'}
-
       {
         (!ingredientsRequest &&
           !ingredientsFailed &&
