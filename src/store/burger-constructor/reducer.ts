@@ -13,7 +13,7 @@ type TBurgerConstructorState = {
   stuffing: TAddedIngredient[],
 };
 
-const initialState: TBurgerConstructorState = {
+export const initialState: TBurgerConstructorState = {
   bun: null,
   stuffing: [],
 };

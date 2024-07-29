@@ -10,7 +10,6 @@ import { getMakeOrderRequestStatus } from '../../store/order/selectors';
 import styles from "./constructor-page.module.css"
 
 const BurgerConstructorDashboard: FC = () => {
-
   const { ingredients, ingredientsRequest, ingredientsFailed } = useAppSelector(getStoreIngredients);
   const makeOrderRequestIsTrue = useAppSelector(getMakeOrderRequestStatus);
 
@@ -29,7 +28,6 @@ const BurgerConstructorDashboard: FC = () => {
           </div>) : null
       }
       {ingredientsFailed && 'Произошла ошибка'}
-
       {
         (!ingredientsRequest &&
           !ingredientsFailed &&

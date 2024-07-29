@@ -9,3 +9,15 @@
   0px 0px 8px rgba(51, 51, 255, 0.25),
   0px 0px 16px rgba(51, 51, 255, 0.25);
 }
+
+.title {
+  width: 640px;
+  height: 64px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.closeIcon {
+  cursor: pointer;
+}

@@ -119,7 +119,7 @@ const BurgerConstructor: FC = () => {
         {
           !bun ?
             <DefaultConstructorElement
-              extraClass={bunStyle}
+              extraClass={`${bunStyle} bun-field`}
               isHover={isOverCurrent}
               type="top"
               text="Выберите булочку" />
@@ -130,7 +130,7 @@ const BurgerConstructor: FC = () => {
               text={`${bun.name} (верх)`}
               price={bun.price}
               thumbnail={bun.image_mobile}
-              extraClass={bunStyle}
+              extraClass={`${bunStyle}`}
             />
         }
         <div ref={elem => {
@@ -140,7 +140,11 @@ const BurgerConstructor: FC = () => {
           {
             !stuffing.length
               ?
-              <DefaultConstructorElement extraClass={bunStyle} isHover={isHover} text="Выберите начинку" />
+              <DefaultConstructorElement
+                extraClass={`${bunStyle} ingredient-field`}
+                isHover={isHover}
+                text="Выберите начинку"
+              />
               :
               stuffing.map((item: TAddedIngredient, index: number): ReactElement => <ConstructorIngredient
                 key={item.sortId}

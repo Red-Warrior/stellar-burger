@@ -13,7 +13,14 @@ export const socketMiddleware = (wsActions: TWSStoreActions): Middleware => {
     return (next) => (action: TWSActions) => {
       const { dispatch } = store;
       const { type } = action;
-      const { wsInit, onOpen, onClose, onError, onMessage, wsSendMessage } = wsActions;
+      const {
+        wsInit,
+        onOpen,
+        onClose,
+        onError,
+        onMessage,
+        wsSendMessage
+      } = wsActions;
       if (type === wsInit) {
         socket = new WebSocket(action.payload);
 
@@ -26,7 +33,6 @@ export const socketMiddleware = (wsActions: TWSStoreActions): Middleware => {
         };
 
         socket.onmessage = event => {
-
           const { data } = event;
           const parsedData: TOrderDataResponse = JSON.parse(data);
 

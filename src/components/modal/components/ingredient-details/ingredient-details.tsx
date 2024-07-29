@@ -4,12 +4,17 @@ import { useAppSelector } from '../../../../store/hooks';
 import { getStoreIngredients } from "../../../../store/ingredients/selectors";
 import { TIngredient } from '../../../../types/ingredient';
 import styles from "./ingredient-details.module.css";
+import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 type TProperty = {
   [key: string]: number;
 };
 
-const IngredientDetails: FC = () => {
+type TIngredientDetails = {
+  handleCloseModal: () => void;
+};
+
+const IngredientDetails: FC<TIngredientDetails> = ({ handleCloseModal }) => {
   const { ingredients } = useAppSelector(getStoreIngredients);
   const { id } = useParams();
 
@@ -33,23 +38,34 @@ const IngredientDetails: FC = () => {
   }, [currentIngredient]);
 
   return (currentIngredient && property) ? (
-    <div className={styles.container}>
-      <img src={currentIngredient.image_large} alt={`Изображение: ${currentIngredient.name}`} />
-      <p className="text text_type_main-medium mt-4">
-        {currentIngredient.name}
-      </p>
-      <ul className={`${styles.set} mt-8`}>
-        {
-          Object.keys(property).map(item =>
-            <li key={item} className={styles.component}>
-              <span className="text text_type_main-default text_color_inactive">{item}</span>
-              <span
-                className="text text_type_digits-default text_color_inactive">{property[item as keyof typeof property]}</span>
-            </li>
-          )
-        }
-      </ul>
-    </div>) : null
+    <>
+      <div className={`${styles.title} title`}>
+        <h2 className="text text_type_main-large">
+          Детали ингредиента
+        </h2>
+        <div className={`${styles.closeIcon} closeIcon`}>
+          <CloseIcon onClick={handleCloseModal} type="primary" />
+        </div>
+      </div>
+      <div className={styles.container}>
+        <img src={currentIngredient.image_large} alt={`Изображение: ${currentIngredient.name}`} />
+        <p data-madal="modal" className="text text_type_main-medium mt-4">
+          {currentIngredient.name}
+        </p>
+        <ul className={`${styles.set} mt-8`}>
+          {
+            Object.keys(property).map(item =>
+              <li key={item} className={styles.component}>
+                <span className="text text_type_main-default text_color_inactive">{item}</span>
+                <span
+                  className="text text_type_digits-default text_color_inactive">{property[item as keyof typeof property]}</span>
+              </li>
+            )
+          }
+        </ul>
+      </div>
+    </>
+  ) : null
 };
 
 export default IngredientDetails;
